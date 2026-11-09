@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Luyện Giữa Kì 1 - GDCD 9</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-teal-700 to-emerald-800 text-white p-6 rounded-2xl shadow-xl mb-6 text-center">
+            <h1 class="text-2xl sm:text-3xl font-extrabold mb-2">📚 Ôn Tập Giữa Kì 1 - GDCD 9</h1>
+            <p class="text-emerald-200 text-sm sm:text-base">Hệ Thống Trắc Nghiệm Tương Tác & Chấm Điểm Tự Động (Đề 1, 2, 3)</p>
+        </header>
+
+        <!-- Main Screen -->
+        <main id="app" class="bg-white rounded-2xl card-shadow p-6 sm:p-8">
+            <!-- Select Exam -->
+            <div id="welcome-screen" class="text-center py-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-6">Chọn bộ đề GDCD 9 bạn muốn ôn tập:</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <button onclick="startExam(1)" class="p-5 bg-teal-50 border-2 border-teal-500 rounded-xl font-bold text-teal-700 hover:bg-teal-600 hover:text-white transition shadow-sm">📝 Ôn Tập Đề 1</button>
+                    <button onclick="startExam(2)" class="p-5 bg-emerald-50 border-2 border-emerald-500 rounded-xl font-bold text-emerald-700 hover:bg-emerald-600 hover:text-white transition shadow-sm">📝 Ôn Tập Đề 2</button>
+                    <button onclick="startExam(3)" class="p-5 bg-green-50 border-2 border-green-500 rounded-xl font-bold text-green-700 hover:bg-green-600 hover:text-white transition shadow-sm">📝 Ôn Tập Đề 3</button>
+                </div>
+                <button onclick="startExam('all')" class="w-full py-4 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-extrabold rounded-xl shadow-lg hover:opacity-90 transition text-lg">🔥 Thi Thử Tổng Hợp Cả 3 Đề</button>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quiz-screen" class="hidden">
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <span id="exam-tag" class="px-3 py-1 bg-teal-100 text-teal-800 text-xs font-bold rounded-full">Đề 1</span>
+                    <span id="question-progress" class="text-sm font-semibold text-gray-500">Câu 1 / 16</span>
+                </div>
+
+                <div id="question-type-badge" class="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-md mb-3">Phần 1: Trắc nghiệm 4 lựa chọn</div>
+                
+                <div id="question-content" class="text-lg font-medium text-gray-900 mb-6 leading-relaxed"></div>
+
+                <!-- MCQ Options -->
+                <div id="mc-options" class="space-y-3 mb-6"></div>
+
+                <!-- True / False Options -->
+                <div id="tf-options" class="space-y-4 mb-6 hidden"></div>
+
+                <div id="explanation-box" class="hidden p-4 rounded-xl mb-6 text-sm"></div>
+
+                <div class="flex justify-between items-center pt-4 border-t">
+                    <button onclick="showHint()" class="text-sm text-amber-600 font-semibold hover:underline">💡 Xem gợi ý</button>
+                    <button id="action-btn" onclick="handleAction()" class="px-6 py-3 bg-teal-600 text-white font-semibold rounded-xl hover:bg-teal-700 transition shadow-md">Kiểm tra đáp án</button>
+                </div>
+            </div>
+
+            <!-- Result Screen -->
+            <div id="result-screen" class="hidden text-center py-8">
+                <div class="text-6xl mb-4">🏆</div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Đã hoàn thành bài ôn tập GDCD 9!</h2>
+                <p id="final-score" class="text-4xl font-extrabold text-teal-600 mb-4">0 điểm</p>
+                <p id="result-comment" class="text-gray-600 mb-8">Chúc mừng bạn! Hãy tiếp tục tự tin ôn thi nhé.</p>
+                <button onclick="location.reload()" class="px-8 py-3 bg-teal-600 text-white font-bold rounded-xl shadow-lg hover:bg-teal-700 transition">Làm Lại Từ Đầu</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const database = {
+            1: [
+                { type: 'mc', q: "Câu 1. Nội dung nào sau đây phản ánh đúng khái niệm sống có lí tưởng?", opts: ["Sống có mục tiêu rõ ràng để đạt lợi ích bản thân.", "Sống có mục đích cao đẹp, nỗ lực phấn đấu để đạt được mục đích đó.", "Sống có ước mơ lớn lao mong muốn mọi người công nhận.", "Sống có kế hoạch cụ thể nhằm đạt thành công tương lai."], correct: 1, hint: "Mục đích cao đẹp hướng tới cộng đồng và bản thân.", rationale: "Sống có lí tưởng là sống có mục đích cao đẹp và nỗ lực phấn đấu để đạt được mục đích đó." },
+                { type: 'mc', q: "Câu 2. Biểu hiện nào thể hiện lí tưởng sống cao đẹp của thanh niên Việt Nam hiện nay?", opts: ["Tích cực học tập, rèn luyện để góp phần xây dựng và bảo vệ Tổ quốc.", "Nỗ lực học tập để có cuộc sống giàu sang và nổi tiếng.", "Cố gắng phấn đấu đạt địa vị cao trong xã hội.", "Chăm chỉ học tập để có công việc ổn định thu nhập cao."], correct: 0, hint: "Gắn liền với trách nhiệm cống hiến cho Tổ quốc.", rationale: "Tích cực học tập, rèn luyện để xây dựng và bảo vệ Tổ quốc là lí tưởng cao đẹp nhất của thanh niên." },
+                { type: 'mc', q: "Câu 3. Sống có lí tưởng cao đẹp mang lại ý nghĩa gì đối với mỗi người?", opts: ["Giúp đạt thành công và có địa vị cao.", "Giúp con người có động lực phấn đấu, hoàn thiện bản thân và cống hiến cho xã hội.", "Giúp thực hiện mọi ước mơ.", "Giúp vượt qua mọi khó khăn đạt thành tích xuất sắc."], correct: 1, hint: "Tạo động lực phát triển bản thân và cống hiến.", rationale: "Giúp con người có động lực phấn đấu, hoàn thiện bản thân và cống hiến cho xã hội." },
+                { type: 'mc', q: "Câu 4. Biểu hiện nào thể hiện lòng khoan dung trong cuộc sống?", opts: ["Tôn trọng và cảm thông với những thiếu sót của người khác.", "Bỏ qua mọi lỗi lầm để giữ tình cảm.", "Chấp nhận mọi hành vi để tránh mâu thuẫn.", "Không góp ý khi người khác mắc lỗi."], correct: 0, hint: "Sự tôn trọng, cảm thông trước thiếu sót.", rationale: "Tôn trọng và cảm thông với thiếu sót của người khác là biểu hiện của lòng khoan dung." },
+                { type: 'mc', q: "Câu 5. Thái độ của người có lòng khoan dung đối với người mắc lỗi?", opts: ["Sẵn sàng tha thứ không cần sửa lỗi.", "Biết cảm thông, tha thứ và tạo cơ hội để họ sửa chữa lỗi lầm.", "Luôn giữ khoảng cách.", "Chấp nhận mọi lời xin lỗi dù không thay đổi."], correct: 1, hint: "Cảm thông, tha thứ và giúp họ sửa sai.", rationale: "Người khoan dung luôn cảm thông, tha thứ và tạo cơ hội để người mắc lỗi sửa chữa." },
+                { type: 'mc', q: "Câu 6. Hành vi nào thể hiện sự thiếu khoan dung?", opts: ["Lắng nghe và tôn trọng ý kiến khác biệt.", "Cảm thông và chia sẻ khó khăn.", "Chỉ trích và cố tình xa lánh người khác khi họ mắc lỗi lầm.", "Tha thứ và tạo cơ hội sửa sai."], correct: 2, hint: "Định kiến, hẹp hòi, xa lánh người mắc lỗi.", rationale: "Chỉ trích và cố tình xa lánh người khác khi họ mắc lỗi là hành vi thiếu khoan dung." },
+                { type: 'mc', q: "Câu 7. Ý nghĩa của lòng khoan dung trong mối quan hệ giữa con người với con người?", opts: ["Tránh bất đồng và không mâu thuẫn.", "Dễ dàng tha thứ không quan tâm lỗi lầm.", "Duy trì mối quan hệ không cần thay đổi cách ứng xử.", "Giúp mọi người thấu hiểu, tôn trọng lẫn nhau và xây dựng các mối quan hệ tốt đẹp."], correct: 3, hint: "Gắn kết, xây dựng mối quan hệ xã hội lành mạnh.", rationale: "Lòng khoan dung giúp mọi người thấu hiểu, tôn trọng lẫn nhau và xây dựng mối quan hệ tốt đẹp." },
+                { type: 'mc', q: "Câu 8. Bạn M không tham gia quyên góp sách vở vì cho rằng không lợi ích cho bản thân. Em làm gì?", opts: ["Tôn trọng quyết định của M vì là quyền cá nhân.", "Giải thích ý nghĩa của hoạt động và vận động M tham gia bằng việc làm phù hợp.", "Đề nghị giáo viên yêu cầu M tham gia.", "Khuyên M đóng tiền để hoàn thành trách nhiệm."], correct: 1, hint: "Giải thích ý nghĩa và thuyết phục bạn tự nguyện.", rationale: "Giải thích ý nghĩa và vận động M tham gia giúp bạn nhận ra giá trị của hoạt động cộng đồng." },
+                { type: 'mc', q: "Câu 9. Hoạt động cộng đồng được hiểu chính xác là:", opts: ["Mọi hoạt động do cá nhân tự thực hiện.", "Những hoạt động có tổ chức, hướng tới phục vụ lợi ích chung của tập thể, cộng đồng xã hội.", "Những hoạt động vui chơi giải trí.", "Mọi hoạt động ở khu dân cư."], correct: 1, hint: "Hướng tới phục vụ lợi ích chung.", rationale: "Hoạt động cộng đồng là những hoạt động có tổ chức, hướng tới phục vụ lợi ích chung của xã hội." },
+                { type: 'mc', q: "Câu 10. Hoạt động nào được xác định là hoạt động cộng đồng?", opts: ["Tham gia CLB thể thao cá nhân.", "Tham gia lớp ngoại ngữ cá nhân.", "Tham gia nhóm tình nguyện hỗ trợ người dân khắc phục hậu quả thiên tai.", "Tham gia cuộc thi năng khiếu."], correct: 2, hint: "Tình nguyện vì cộng đồng.", rationale: "Hỗ trợ người dân khắc phục hậu quả thiên tai là hoạt động tình nguyện vì cộng đồng." },
+                { type: 'mc', q: "Câu 11. Vận động bạn tham gia 'Ngày Chủ nhật xanh':", opts: ["Phân công bắt buộc.", "Tuyên truyền trách nhiệm bảo vệ môi trường, vận động và cùng các bạn thực hiện.", "Đề nghị giáo viên yêu cầu.", "Tự giác làm một mình."], correct: 1, hint: "Tuyên truyền, vận động và làm gương.", rationale: "Tuyên truyền trách nhiệm bảo vệ môi trường và vận động cùng làm là cách ứng xử tích cực nhất." },
+                { type: 'mc', q: "Câu 12. Biểu hiện thái độ khách quan khi đánh giá người khác?", opts: ["Dựa trên ấn tượng ban đầu.", "Dựa trên nhận xét người thân.", "Dựa trên tình cảm cá nhân.", "Đánh giá người khác dựa trên sự thật và những thông tin đã được kiểm chứng."], correct: 3, hint: "Trung thực với sự thật, không thiên vị.", rationale: "Đánh giá khách quan là dựa trên sự thật và những thông tin đã được kiểm chứng." },
+                { 
+                    type: 'tf', 
+                    q: "Câu 13. Vận động viên Nguyễn Thị Oanh giành 4 HCV SEA Games 32:", 
+                    sub: [
+                        { text: "Khát vọng mang vinh quang về cho Tổ quốc của Oanh là biểu hiện lí tưởng sống cao đẹp.", ans: true },
+                        { text: "Thành tích của Oanh cho thấy sống có lí tưởng giúp con người có động lực vượt khó.", ans: true },
+                        { text: "Lí tưởng của Oanh chỉ thể hiện ở thành tích cá nhân, không gắn với sự cống hiến cho đất nước.", ans: false },
+                        { text: "Học sinh cần xác định mục tiêu học tập phù hợp và đóng góp cho cộng đồng.", ans: true }
+                    ],
+                    hint: "Ý c sai vì thành tích mang vinh quang cho Tổ quốc.",
+                    rationale: "a, b, d Đúng. c Sai vì khát vọng mang vinh quang về cho Tổ quốc gắn liền với cống hiến cho đất nước."
+                },
+                { 
+                    type: 'tf', 
+                    q: "Câu 14. Trong buổi thuyết trình, Minh làm sai khiến nhóm bị điểm thấp. Minh nhận lỗi. Lan khuyên nhóm nên thông cảm và tạo cơ hội:", 
+                    sub: [
+                        { text: "Lan khuyên thông cảm và tạo cơ hội cho Minh sửa sai là biểu hiện lòng khoan dung.", ans: true },
+                        { text: "Thái độ trách móc, tẩy chay có thể khiến Minh mặc cảm và gây mất đoàn kết.", ans: true },
+                        { text: "Khi Minh đã nhận lỗi, nhóm cần bỏ qua và không cần góp ý để tránh làm tổn thương.", ans: false },
+                        { text: "Thành viên nhóm nên chấp nhận lời xin lỗi và cùng Minh khắc phục sai sót.", ans: true }
+                    ],
+                    hint: "Ý c sai vì tha thứ nhưng vẫn cần góp ý chân thành.",
+                    rationale: "c Sai vì tha thứ không có nghĩa là không góp ý; vẫn cần góp ý chân thành để giúp bạn tiến bộ."
+                },
+                { 
+                    type: 'tf', 
+                    q: "Câu 15. Chương trình 'Tiếp sức mùa thi' 2024 hỗ trợ gần 900.000 suất ăn, 3 triệu chai nước:", 
+                    sub: [
+                        { text: "Hoạt động hỗ trợ thí sinh miễn phí trong 'Tiếp sức mùa thi' là những hoạt động cộng đồng.", ans: true },
+                        { text: "Chương trình thể hiện tinh thần trách nhiệm và quan tâm của thanh niên đối với cộng đồng.", ans: true },
+                        { text: "Việc tham gia chỉ mang lại lợi ích cho thí sinh, không giúp rèn luyện kĩ năng cho tình nguyện viên.", ans: false },
+                        { text: "Học sinh lớp 9 nên chủ động đăng kí việc phù hợp và vận động bạn bè cùng tham gia.", ans: true }
+                    ],
+                    hint: "Ý c sai vì tình nguyện viên cũng rèn luyện kĩ năng sống.",
+                    rationale: "c Sai vì hoạt động cộng đồng giúp tình nguyện viên rèn luyện kĩ năng sống và trách nhiệm xã hội."
+                },
+                { 
+                    type: 'tf', 
+                    q: "Câu 16. Napoleon Hill đề cao sự thật và tính công bằng trong giao dịch:", 
+                    sub: [
+                        { text: "Việc quan tâm tới lợi ích chính đáng của các bên là biểu hiện công bằng.", ans: true },
+                        { text: "Theo câu nói, chỉ có người giàu mới cần hành động công bằng.", ans: false },
+                        { text: "Sự giàu sang và địa vị chỉ bền vững khi xây dựng trên sự thật và công bằng.", ans: true },
+                        { text: "Khi đánh giá bài nhóm, dù bạn thân vẫn cần nhận xét trung thực, công bằng.", ans: true }
+                    ],
+                    hint: "Ý b sai nhận thức về tính công bằng.",
+                    rationale: "b Sai vì công bằng áp dụng cho tất cả mọi người chứ không riêng người giàu sang hay có địa vị."
+                }
+            ]
+        };
+
+        database[2] = [
+            { type: 'mc', q: "Câu 1. Điền vào chỗ chấm: 'Lí tưởng là mục đích ... mà con người mong muốn đạt tới.'", opts: ["quan trọng", "cao đẹp nhất", "đẹp đẽ", "mãnh liệt"], correct: 1, hint: "Khái niệm lí tưởng trong SGK.", rationale: "Lí tưởng là mục đích cao đẹp nhất mà con người mong muốn đạt tới." },
+            { type: 'mc', q: "Câu 2. Biểu hiện cho thấy người chưa có lí tưởng sống?", opts: ["Biết xác định mục tiêu học tập.", "Cố gắng học tập để cống hiến.", "Sống buông thả, không quan tâm kết quả học tập.", "Kiên trì vượt khó đạt mục tiêu."], correct: 2, hint: "Sống thiếu mục tiêu, buông thả.", rationale: "Sống buông thả, không quan tâm học tập thể hiện người chưa có lí tưởng sống." },
+            { type: 'mc', q: "Câu 3. Ý nào đúng khi nói về ý nghĩa của người sống có lí tưởng?", opts: ["Sẽ giàu có về tâm hồn.", "Luôn được mọi người tôn trọng.", "Luôn có nhiều bạn.", "Sẽ trở lên giàu có."], correct: 1, hint: "Nhận được sự tôn trọng của mọi người.", rationale: "Người sống có lí tưởng cao đẹp luôn được mọi người tôn trọng và noi theo." },
+            { type: 'mc', q: "Câu 4. Biểu hiện thể hiện lòng khoan dung?", opts: ["Bỏ qua mọi hành vi sai trái.", "Đồng tình với mọi ý kiến.", "Cảm thông và tạo cơ hội để người mắc lỗi sửa chữa.", "Không góp ý để giữ hòa khí."], correct: 2, hint: "Cảm thông và giúp đỡ sửa sai.", rationale: "Khoan dung là cảm thông và tạo cơ hội cho người mắc lỗi sửa chữa sai lầm." },
+            { type: 'mc', q: "Câu 5. Hành động KHÔNG thể hiện lòng khoan dung?", opts: ["Tha thứ lỗi lầm.", "Cảm thông với khó khăn.", "Lắng nghe tôn trọng ý kiến khác biệt.", "Cố tình trả đũa người đã xúc phạm mình."], correct: 3, hint: "Trả đũa, thù hằn.", rationale: "Cố tình trả đũa là hành vi thù hằn, hoàn toàn trái ngược với lòng khoan dung." },
+            { type: 'mc', q: "Câu 6. Lòng khoan dung thể hiện ở hành vi nào?", opts: ["Tha thứ khi bạn làm sai và khuyên bạn sửa lỗi.", "Tránh xa bạn khi bạn mắc lỗi.", "Nói xấu bạn khi bạn có khuyết điểm.", "Phạt bạn thật nặng để răn đe."], correct: 0, hint: "Tha thứ kết hợp khuyên bảo sửa lỗi.", rationale: "Tha thứ và khuyên bạn sửa lỗi là biểu hiện chuẩn mực của lòng khoan dung." },
+            { type: 'mc', q: "Câu 7. Ý nghĩa lòng khoan dung trong các mối quan hệ:", opts: ["Giúp mọi người thấu hiểu, tôn trọng và xây dựng quan hệ tốt đẹp.", "Giúp không bao giờ bất đồng ý kiến.", "Khiến mỗi người phải chấp nhận mọi lỗi lầm.", "Khiến không cần góp ý khi mâu thuẫn."], correct: 0, hint: "Xây dựng mối quan hệ bền vững.", rationale: "Giúp mọi người thấu hiểu, tôn trọng và xây dựng các mối quan hệ tốt đẹp." },
+            { type: 'mc', q: "Câu 8. Quân bị nhóm học sinh đe dọa, xô đẩy. Nếu là lớp trưởng chứng kiến, em sẽ làm gì?", opts: ["Đến can ngăn một mình.", "Gọi người lớn hoặc giáo viên hỗ trợ, bảo đảm an toàn cho Quân.", "Đề nghị Quân bỏ qua.", "Tự tìm gặp nhóm đó giải quyết riêng."], correct: 1, hint: "Tìm sự trợ giúp của giáo viên/người lớn.", rationale: "Báo người lớn/giáo viên là giải pháp an toàn và hiệu quả nhất." },
+            { type: 'mc', q: "Câu 9. Hoạt động cộng đồng được hiểu chính xác là:", opts: ["Hoạt động cá nhân tự thực hiện.", "Hoạt động có tổ chức hướng tới phục vụ lợi ích chung của tập thể, cộng đồng xã hội.", "Hoạt động vui chơi giải trí.", "Mọi hoạt động ở khu dân cư."], correct: 1, hint: "Phục vụ lợi ích cộng đồng.", rationale: "Hoạt động cộng đồng hướng tới lợi ích chung của tập thể và xã hội." },
+            { type: 'mc', q: "Câu 10. Nhận định đúng về vai trò của học sinh trong hoạt động cộng đồng?", opts: ["Chỉ tham gia khi có yêu cầu bắt buộc.", "Vai trò rất hạn chế do nhỏ tuổi.", "Học sinh có thể là người thực hiện, tham gia hoặc tuyên truyền.", "Không cần hiểu rõ ý nghĩa."], correct: 2, hint: "Tham gia tích cực và tuyên truyền.", rationale: "Học sinh có thể trực tiếp tham gia, thực hiện hoặc tuyên truyền các hoạt động cộng đồng." },
+            { type: 'mc', q: "Câu 11. Vận động bạn tham gia 'Ngày Chủ nhật xanh':", opts: ["Yêu cầu bắt buộc tham gia.", "Giải thích lợi ích chung, rủ các bạn chọn việc phù hợp và cùng thực hiện.", "Chỉ tham gia một mình.", "Góp tiền thuê người làm thay."], correct: 1, hint: "Giải thích và cùng làm.", rationale: "Giải thích lợi ích chung và rủ bạn cùng làm việc phù hợp là cách vận động văn minh." },
+            { type: 'mc', q: "Câu 12. Biểu hiện nào là khách quan?", opts: ["Nhìn nhận sự việc thiên vị.", "Nhìn nhận sự việc phiến diện.", "Nhìn nhận sự vật một cách chính xác.", "Nhìn nhận định kiến."], correct: 2, hint: "Chính xác, trung thực với sự thật.", rationale: "Khách quan là nhìn nhận sự vật, hiện tượng một cách chính xác, đúng bản chất." },
+            { 
+                type: 'tf', 
+                q: "Câu 13. Bác sĩ trẻ Đặng Minh Hiệu cạo trọc đầu, xung phong vào tâm dịch Bắc Giang chống dịch COVID-19:", 
+                sub: [
+                    { text: "Việc làm của bác sĩ Hiệu thể hiện sự nông nổi của tuổi trẻ, thích thể hiện bản thân.", ans: false },
+                    { text: "Sẵn sàng đến vùng dịch cho thấy lí tưởng sống gắn với trách nhiệm và cống hiến.", ans: true },
+                    { text: "Học sinh cần làm những việc mạo hiểm bằng mọi giá để thực hiện mục đích sống.", ans: false },
+                    { text: "Đây là tấm gương về ý chí và tinh thần xung kích của thanh niên đóng góp cho cộng đồng.", ans: true }
+                ],
+                hint: "Ý a và c phản ánh nhận thức sai lệch.",
+                rationale: "a, c Sai. b, d Đúng vì hành động của bác sĩ Hiệu thể hiện tinh thần cống hiến cao đẹp."
+            },
+            { 
+                type: 'tf', 
+                q: "Câu 14. Gia đình bà A hay to tiếng, không chấp hành quy định. Sau nhận thấy hàng xóm xa lánh đã xin lỗi tổ dân phố:", 
+                sub: [
+                    { text: "Gia đình bà A cư xử thiếu tôn trọng tập thể trong khu phố.", ans: true },
+                    { text: "Hành động của tổ trưởng dân phố là sai vì can thiệp việc riêng.", ans: false },
+                    { text: "Bà A xin lỗi cho thấy bà biết tự điều chỉnh hành vi và thể hiện lòng khoan dung với bản thân.", ans: true },
+                    { text: "Hàng xóm nên ghi nhận lời xin lỗi, khuyến khích sửa sai và cùng xây dựng nếp sống văn minh.", ans: true }
+                ],
+                hint: "Tổ trưởng dân phố nhắc nhở quy định chung là đúng trách nhiệm.",
+                rationale: "b Sai vì tổ trưởng dân phố nhắc nhở quy định chung là đúng thẩm quyền."
+            },
+            { 
+                type: 'tf', 
+                q: "Câu 15. Báo cáo Hội LHTN Việt Nam 2023 về phong trào 'Ngày Chủ nhật xanh':", 
+                sub: [
+                    { text: "Một bộ phận thanh niên không tham gia vì cho rằng không mang lại lợi ích thiết thực cá nhân.", ans: true },
+                    { text: "Các hoạt động cộng đồng không đóng góp vào nâng cao ý thức bảo vệ môi trường.", ans: false },
+                    { text: "Việc tham gia hoạt động cộng đồng không ảnh hưởng đến kỹ năng sống của thanh niên.", ans: false },
+                    { text: "Tham gia hoạt động cộng đồng giúp thanh niên xây dựng mối quan hệ xã hội.", ans: true }
+                ],
+                hint: "Lưu ý ý b và c phủ định vai trò của hoạt động cộng đồng.",
+                rationale: "b, c Sai vì hoạt động cộng đồng nâng cao ý thức môi trường và phát triển kĩ năng sống."
+            },
+            { 
+                type: 'tf', 
+                q: "Câu 16. Napoleon Hill đề cao sự thật và tính công bằng trong giao dịch:", 
+                sub: [
+                    { text: "Napoleon Hill đề cao vai trò của công bằng trong cuộc sống.", ans: true },
+                    { text: "Theo câu nói, chỉ có người giàu mới cần hành động công bằng.", ans: false },
+                    { text: "Để xã hội phát triển hòa bình, chúng ta cần đối xử công bằng với nhau.", ans: true },
+                    { text: "Khi đánh giá bài nhóm, cần căn cứ mức độ đóng góp thực tế, không thiên vị bạn thân.", ans: true }
+                ],
+                hint: "Ý b sai nhận thức về công bằng.",
+                rationale: "b Sai vì công bằng là nguyên tắc chung cho tất cả mọi người."
+            }
+        ];
+
+        database[3] = [
+            { type: 'mc', q: "Câu 1. Sống có lí tưởng là:", opts: ["sống chỉ quan tâm đến lợi ích cá nhân.", "xác định được mục đích sống cao đẹp và nỗ lực phấn đấu để đạt được.", "sống theo trào lưu, chạy theo sở thích của người khác.", "chấp nhận thực tại và không cần vươn lên."], correct: 1, hint: "Mục đích cao đẹp + nỗ lực phấn đấu.", rationale: "Sống có lí tưởng là xác định mục đích cao đẹp và nỗ lực phấn đấu đạt mục đích đó." },
+            { type: 'mc', q: "Câu 2. Lí tưởng sống cao đẹp của thanh niên Việt Nam hiện nay là:", opts: ["phấn đấu vì độc lập dân tộc và chủ nghĩa xã hội, vì mục tiêu dân giàu, nước mạnh, dân chủ, công bằng, văn minh.", "nỗ lực làm giàu cho bản thân bằng mọi giá.", "tìm kiếm cuộc sống an nhàn, tránh xa xã hội.", "chạy theo xu hướng thời thượng trên mạng."], correct: 0, hint: "Vì độc lập dân tộc, dân giàu nước mạnh.", rationale: "Đó là lí tưởng cốt lõi của thanh niên Việt Nam." },
+            { type: 'mc', q: "Câu 3. Ý nghĩa của việc sống có lí tưởng đối với mỗi cá nhân là gì?", opts: ["Giúp cá nhân vượt qua khó khăn, hoàn thiện bản thân và đóng góp cho xã hội.", "Đảm bảo chắc chắn sẽ trở nên giàu có.", "Giúp cá nhân không bao giờ thất bại.", "Giúp cá nhân nổi tiếng trên mạng."], correct: 0, hint: "Động lực vượt khó và cống hiến.", rationale: "Giúp vượt qua khó khăn, vươn lên hoàn thiện bản thân và cống hiến." },
+            { type: 'mc', q: "Câu 4. Tôn trọng, rộng lượng, tha thứ cho người khác khi họ biết nhận lỗi và sửa chữa là biểu hiện của:", opts: ["tính khiêm tốn.", "lòng khoan dung.", "tính trung thực.", "sự cẩn trọng."], correct: 1, hint: "Rộng lượng, tha thứ.", rationale: "Đó là định nghĩa của lòng khoan dung." },
+            { type: 'mc', q: "Câu 5. Hành vi nào là biểu hiện của lòng khoan dung?", opts: ["Cố tình nhắc lại sai lầm cũ của bạn.", "Bỏ qua mọi hành vi vi phạm pháp luật nghiêm trọng.", "Giữ thái độ định kiến, hận thù.", "Sẵn sàng lắng nghe, cảm thông và tha thứ khi bạn chân thành xin lỗi."], correct: 3, hint: "Cảm thông và tha thứ khi bạn nhận lỗi.", rationale: "Lắng nghe, cảm thông và tha thứ là biểu hiện của lòng khoan dung." },
+            { type: 'mc', q: "Câu 6. Người có lòng khoan dung là người:", opts: ["luôn sống vị kỷ.", "thỏa hiệp và bao che cho mọi vi phạm.", "biết lắng nghe, tôn trọng sự khác biệt, không cố chấp, hẹp hòi.", "luôn áp đặt ý kiến cá nhân."], correct: 2, hint: "Tôn trọng sự khác biệt, không hẹp hòi.", rationale: "Biết lắng nghe, tôn trọng sự khác biệt và không định kiến." },
+            { type: 'mc', q: "Câu 7. Giá trị to lớn của lòng khoan dung đối với các mối quan hệ xã hội là gì?", opts: ["Giải quyết tận gốc xung đột kinh tế.", "Giúp mối quan hệ giữa người với người sẽ tốt đẹp hơn.", "Nhận được nhiều quà tặng.", "Loại bỏ hoàn toàn sự cạnh tranh."], correct: 1, hint: "Xây dựng mối quan hệ tốt đẹp.", rationale: "Lòng khoan dung giúp mối quan hệ giữa người với người tốt đẹp hơn." },
+            { type: 'mc', q: "Câu 8. Trong thảo luận nhóm, bạn A đưa ra ý kiến trái ngược nhưng đúng thực tế, em nên làm gì?", opts: ["Bình tĩnh lắng nghe, tôn trọng ý kiến khác biệt của bạn và tiếp thu nếu đúng.", "Bỏ ra về không tham gia nữa.", "Cắt ngang lời bạn và chỉ trích.", "Tuyên bố chấm dứt quan hệ bạn bè."], correct: 0, hint: "Lắng nghe, tôn trọng ý kiến khác biệt.", rationale: "Bình tĩnh lắng nghe và tiếp thu ý kiến đúng là ứng dụng của tính khách quan và khoan dung." },
+            { type: 'mc', q: "Câu 9. Hoạt động cộng đồng là các hoạt động:", opts: ["nhằm phục vụ mục đích kinh doanh gia đình.", "mang tính riêng tư, kín đáo.", "bắt buộc đối với người lao động.", "do cá nhân hoặc tổ chức thực hiện vì lợi ích chung của cộng đồng và xã hội."], correct: 3, hint: "Vì lợi ích chung của cộng đồng.", rationale: "Hoạt động vì lợi ích chung của cộng đồng và xã hội." },
+            { type: 'mc', q: "Câu 10. Hoạt động nào KHÔNG phải là hoạt động cộng đồng?", opts: ["Dọn vệ sinh đường phố.", "Quyên góp ủng hộ đồng bào lũ lụt.", "Chơi game giải trí cá nhân tại nhà.", "Tham gia 'Tiếp sức mùa thi'."], correct: 2, hint: "Hoạt động giải trí cá nhân.", rationale: "Chơi game cá nhân tại nhà phục vụ nhu cầu riêng tư, không phải hoạt động cộng đồng." },
+            { type: 'mc', q: "Câu 11. Khi trường tổ chức 'Ngày Chủ nhật xanh', học sinh nên làm gì?", opts: ["Tự giác, tích cực tham gia các công việc được phân công và kêu gọi bạn bè.", "Viện lý do bận việc gia đình để trốn.", "Đến điểm danh rồi bỏ đi chơi game.", "Đứng nhìn và chê bai."], correct: 0, hint: "Tự giác, tích cực tham gia.", rationale: "Tự giác tham gia và kêu gọi bạn bè hưởng ứng." },
+            { type: 'mc', q: "Câu 12. Nhìn nhận, đánh giá sự vật trung thực, đúng bản chất, không định kiến, không thiên vị là biểu hiện của:", opts: ["tính khách quan.", "tính chủ quan.", "tính bảo thủ.", "sự tự tin."], correct: 0, hint: "Đúng bản chất, không thiên vị.", rationale: "Đó chính là định nghĩa của tính khách quan." },
+            { 
+                type: 'tf', 
+                q: "Câu 13. Bạn Nam học lớp 9 mơ ước thành bác sĩ chữa bệnh cho người nghèo. Nam lập kế hoạch học tập và tham gia thiện nguyện. Một số bạn cho rằng chỉ cần lo thi đỗ cấp 3:", 
+                sub: [
+                    { text: "Ước mơ trở thành bác sĩ chữa bệnh cho người nghèo của Nam là biểu hiện lí tưởng sống cao đẹp.", ans: true },
+                    { text: "Lập trường cho rằng chỉ cần thi đỗ cấp 3 không cần mơ ước thể hiện nhận thức đúng đắn.", ans: false },
+                    { text: "Việc Nam vừa học vừa làm thiện nguyện giúp rèn luyện toàn diện kĩ năng và phát triển bản thân.", ans: true },
+                    { text: "Học sinh lớp 9 chỉ cần học thật giỏi không cần tham gia hoạt động xã hội vì chưa đủ tuổi.", ans: false }
+                ],
+                hint: "Mơ ước cống hiến là lí tưởng cao đẹp.",
+                rationale: "b, d Sai vì suy nghĩ hẹp hòi, thiếu ý thức cống hiến cho cộng đồng."
+            },
+            { 
+                type: 'tf', 
+                q: "Câu 14. Trong giờ kiểm tra Văn, Minh vô tình làm rớt mực lên bài Hoa. Minh xin lỗi chân thành, Hoa mỉm cười bỏ qua và nhắc Minh cẩn thận hơn:", 
+                sub: [
+                    { text: "Việc Hoa mỉm cười bỏ qua cho Minh là biểu hiện cụ thể của lòng khoan dung.", ans: true },
+                    { text: "Sự bao dung của Hoa giúp duy trì tình bạn, tránh xung đột không đáng có.", ans: true },
+                    { text: "Lòng khoan dung đòi hỏi tha thứ cho tất cả mọi hành vi, kể cả cố tình vi phạm pháp luật nhiều lần.", ans: false },
+                    { text: "Để thực hiện lòng khoan dung, cần biết kiềm chế cảm xúc tiêu cực và lắng nghe.", ans: true }
+                ],
+                hint: "Ý c: Khoan dung không bao che cho vi phạm pháp luật.",
+                rationale: "c Sai vì khoan dung không đồng nghĩa với thỏa hiệp hay bao che cho vi phạm pháp luật."
+            },
+            { 
+                type: 'tf', 
+                q: "Câu 15. Trường THCS Kiến Thụy phát động phong trào 'Nuôi heo đất - Trao tình thương'. Lan đập heo đất lấy tiền tiết kiệm quyên góp, Hùng cho rằng đây là việc người lớn:", 
+                sub: [
+                    { text: "Phong trào 'Nuôi heo đất - Trao tình thương' là hoạt động cộng đồng có ý nghĩa nhân văn.", ans: true },
+                    { text: "Vận động bạn bè cùng tham gia hoạt động thiện nguyện thể hiện sự tích cực của học sinh.", ans: true },
+                    { text: "Suy nghĩ của Hùng thể hiện thái độ thờ ơ, thiếu trách nhiệm đối với hoạt động chung.", ans: true },
+                    { text: "Học sinh THCS do chưa làm ra tiền nên tuyệt đối không nên tham gia quyên góp.", ans: false }
+                ],
+                hint: "Ý d: Học sinh đóng góp phù hợp với khả năng nhỏ của mình.",
+                rationale: "d Sai vì học sinh có thể đóng góp bằng tinh thần, tiết kiệm cá nhân phù hợp với sức mình."
+            },
+            { 
+                type: 'tf', 
+                q: "Câu 16. Lớp trưởng Tuấn thẳng thắn chỉ ra lỗi mất trật tự của bạn thân Dũng và tuyên dương bạn Mai (dù trước đây từng bất đồng ý kiến):", 
+                sub: [
+                    { text: "Hành vi của Tuấn thể hiện sự khách quan, công bằng, không vị nể bạn thân.", ans: true },
+                    { text: "Nhận xét đúng sự thật, không thiên vị trong công việc chung là biểu hiện của công bằng.", ans: true },
+                    { text: "Việc Tuấn xử lí công minh với bạn thân làm mất uy tín của Lớp trưởng.", ans: false },
+                    { text: "Thái độ công minh của Tuấn góp phần xây dựng tập thể lớp đoàn kết, minh bạch.", ans: true }
+                ],
+                hint: "Công minh giúp tăng uy tín chứ không làm mất uy tín.",
+                rationale: "c Sai vì sự công minh giúp tăng uy tín và lòng tin của tập thể đối với Lớp trưởng."
+            }
+        ];
+
+        let activeQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let isChecked = false;
+        let selectedMCIdx = null;
+
+        function startExam(id) {
+            activeQuestions = (id === 'all') ? [...database[1], ...database[2], ...database[3]] : [...database[id]];
+            currentIndex = 0;
+            score = 0;
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isChecked = false;
+            selectedMCIdx = null;
+            const q = activeQuestions[currentIndex];
+            document.getElementById('question-progress').innerText = `Câu ${currentIndex + 1} / ${activeQuestions.length}`;
+            document.getElementById('question-content').innerHTML = q.q;
+            document.getElementById('explanation-box').classList.add('hidden');
+            document.getElementById('action-btn').innerText = "Kiểm tra đáp án";
+
+            const mcContainer = document.getElementById('mc-options');
+            const tfContainer = document.getElementById('tf-options');
+
+            mcContainer.classList.add('hidden');
+            tfContainer.classList.add('hidden');
+
+            if (q.type === 'mc') {
+                document.getElementById('question-type-badge').innerText = "Phần 1: Trắc nghiệm 4 lựa chọn";
+                mcContainer.classList.remove('hidden');
+                mcContainer.innerHTML = '';
+                q.opts.forEach((opt, idx) => {
+                    mcContainer.innerHTML += `
+                        <div id="opt-card-${idx}" onclick="selectMC(${idx})" class="opt-btn flex items-center justify-between p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-teal-400 bg-white transition">
+                            <div class="flex items-center">
+                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center mr-3 font-bold text-sm text-gray-500" id="opt-circle-${idx}">${String.fromCharCode(65 + idx)}</span>
+                                <span class="text-gray-800 font-medium">${opt}</span>
+                            </div>
+                            <span id="opt-status-${idx}" class="font-bold text-sm"></span>
+                        </div>
+                    `;
+                });
+            } else if (q.type === 'tf') {
+                document.getElementById('question-type-badge').innerText = "Phần 2: Trắc nghiệm Đúng - Sai";
+                tfContainer.classList.remove('hidden');
+                tfContainer.innerHTML = '';
+                q.sub.forEach((subItem, subIdx) => {
+                    tfContainer.innerHTML += `
+                        <div id="tf-card-${subIdx}" class="p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                            <p class="font-medium text-gray-800 mb-2">${String.fromCharCode(97 + subIdx)}) ${subItem.text}</p>
+                            <div class="flex gap-4">
+                                <label class="flex items-center cursor-pointer font-semibold text-gray-700"><input type="radio" name="tf_${subIdx}" value="true" class="mr-2 w-4 h-4 text-teal-600"> Đúng</label>
+                                <label class="flex items-center cursor-pointer font-semibold text-gray-700"><input type="radio" name="tf_${subIdx}" value="false" class="mr-2 w-4 h-4 text-teal-600"> Sai</label>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function selectMC(idx) {
+            if (isChecked) return;
+            selectedMCIdx = idx;
+            document.querySelectorAll('.opt-btn').forEach((btn, i) => {
+                if (i === idx) {
+                    btn.className = "opt-btn flex items-center justify-between p-4 border-2 border-teal-500 bg-teal-50 rounded-xl cursor-pointer transition";
+                } else {
+                    btn.className = "opt-btn flex items-center justify-between p-4 border-2 border-gray-200 bg-white rounded-xl cursor-pointer transition";
+                }
+            });
+        }
+
+        function handleAction() {
+            if (!isChecked) {
+                const q = activeQuestions[currentIndex];
+                
+                if (q.type === 'mc') {
+                    if (selectedMCIdx === null) { alert("Vui lòng chọn một đáp án!"); return; }
+                    
+                    const userCard = document.getElementById(`opt-card-${selectedMCIdx}`);
+                    const userStatus = document.getElementById(`opt-status-${selectedMCIdx}`);
+                    const correctCard = document.getElementById(`opt-card-${q.correct}`);
+                    const correctStatus = document.getElementById(`opt-status-${q.correct}`);
+
+                    if (selectedMCIdx === q.correct) {
+                        userCard.className = "opt-btn flex items-center justify-between p-4 border-2 border-emerald-500 bg-emerald-50 rounded-xl transition";
+                        userStatus.className = "text-emerald-600 font-bold";
+                        userStatus.innerText = "✓ Đúng rồi!";
+                        score++;
+                    } else {
+                        userCard.className = "opt-btn flex items-center justify-between p-4 border-2 border-rose-500 bg-rose-50 rounded-xl transition";
+                        userStatus.className = "text-rose-600 font-bold";
+                        userStatus.innerText = "✗ Sai mất rồi";
+                        
+                        correctCard.className = "opt-btn flex items-center justify-between p-4 border-2 border-emerald-500 bg-emerald-50 rounded-xl transition";
+                        correctStatus.className = "text-emerald-600 font-bold";
+                        correctStatus.innerText = "✓ Đáp án đúng";
+                    }
+                } else if (q.type === 'tf') {
+                    let complete = true;
+                    q.sub.forEach((subItem, subIdx) => {
+                        const sel = document.querySelector(`input[name="tf_${subIdx}"]:checked`);
+                        const card = document.getElementById(`tf-card-${subIdx}`);
+                        if (!sel) complete = false;
+                        else {
+                            const val = sel.value === 'true';
+                            if (val === subItem.ans) {
+                                card.className = "p-4 bg-emerald-50 border-2 border-emerald-500 rounded-xl";
+                            } else {
+                                card.className = "p-4 bg-rose-50 border-2 border-rose-500 rounded-xl";
+                            }
+                        }
+                    });
+                    if (!complete) { alert("Vui lòng làm đủ các câu a, b, c, d!"); return; }
+                }
+
+                const expBox = document.getElementById('explanation-box');
+                expBox.className = "p-4 rounded-xl mb-6 text-sm bg-teal-50 text-teal-900 border border-teal-200";
+                expBox.innerHTML = `<strong>📖 Hướng dẫn giải thích:</strong> ${q.rationale}`;
+                expBox.classList.remove('hidden');
+
+                isChecked = true;
+                document.getElementById('action-btn').innerText = (currentIndex === activeQuestions.length - 1) ? "Xem kết quả" : "Câu tiếp theo ➜";
+            } else {
+                currentIndex++;
+                if (currentIndex < activeQuestions.length) {
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            }
+        }
+
+        function showHint() {
+            alert(`💡 Gợi ý: ${activeQuestions[currentIndex].hint}`);
+        }
+
+        function showResult() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${score} / ${activeQuestions.length} câu đúng`;
+        }
+    </script>
+</body>
+</html>
