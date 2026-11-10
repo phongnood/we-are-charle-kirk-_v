@@ -3,690 +3,534 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Ôn Thi Giữa Kì 1 - KHTN 9 & GDCD 9</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            },
-            svg: { fontCache: 'global' }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <title>hoàng đế ngai vàng ngày cuối</title>
     <style>
-        body { background-color: #f1f5f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        :root {
+            --primary: #1d4ed8;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --success: #15803d;
+            --error: #b91c1c;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 10px 16px;
+            border: none;
+            background: #cbd5e1;
+            color: var(--text);
+            font-weight: bold;
+            font-size: 0.95em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border-left: 5px solid #cbd5e1;
+        }
+
+        .card.correct { border-left-color: var(--success); }
+        .card.wrong { border-left-color: var(--error); }
+
+        .question-title {
+            font-weight: bold;
+            font-size: 1.05em;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        .options label {
+            display: block;
+            padding: 10px 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .options label:hover {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+        .tf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .tf-table th, .tf-table td {
+            border: 1px solid #cbd5e1;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .tf-table th {
+            background: #f1f5f9;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: #15803d;
+        }
+
+        .result-box {
+            display: none;
+            padding: 20px;
+            background: #dbeafe;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .feedback-text {
+            margin-top: 8px;
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+        .correct-text { color: var(--success); }
+        .wrong-text { color: var(--error); }
     </style>
 </head>
-<body class="min-h-screen py-6 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto">
-        <!-- Header Dynamic -->
-        <header id="app-header" class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 rounded-2xl shadow-xl mb-6 text-center transition-all">
-            <h1 id="header-title" class="text-2xl sm:text-3xl font-extrabold mb-2">🚀 Luyện Tập Ôn Thi Giữa Kì I</h1>
-            <p id="header-sub" class="text-blue-200 text-sm sm:text-base">Hệ thống Trắc nghiệm Tương tác & Chấm điểm Tự động</p>
-        </header>
+<body>
 
-        <!-- Navigation Bar: Chọn môn -->
-        <nav class="flex justify-center gap-4 mb-6">
-            <button id="btn-subject-khtn" onclick="switchSubject('khtn')" class="px-6 py-3 rounded-xl font-bold transition-all shadow-md bg-blue-600 text-white">🔬 Khoa Học Tự Nhiên 9</button>
-            <button id="btn-subject-gdcd" onclick="switchSubject('gdcd')" class="px-6 py-3 rounded-xl font-bold transition-all shadow-md bg-gray-200 text-gray-700 hover:bg-gray-300">📚 Giáo Dục Công Dân 9</button>
-        </nav>
+<div class="container">
+    <h1>bá khí quá chơi 10 đi anh em 🗿🥀</h1>
 
-        <!-- Main Content -->
-        <main id="app" class="bg-white rounded-2xl card-shadow p-6 sm:p-8">
-            <!-- Screen 1: Welcome & Exam Selector -->
-            <div id="welcome-screen" class="text-center py-4">
-                <h2 id="welcome-title" class="text-xl font-bold text-gray-800 mb-6">Chọn bộ đề ôn tập:</h2>
-                <div id="exam-buttons-container" class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-                    <!-- Dynamic Buttons -->
-                </div>
-                <button onclick="startExam('all')" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold rounded-xl shadow-lg hover:opacity-90 transition text-lg">🔥 Thi Thử Tổng Hợp Tất Cả Các Đề</button>
-            </div>
-
-            <!-- Screen 2: Quiz Screen -->
-            <div id="quiz-screen" class="hidden">
-                <div class="flex justify-between items-center mb-6 border-b pb-4">
-                    <span id="exam-tag" class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">Đề 1</span>
-                    <span id="question-progress" class="text-sm font-semibold text-gray-500">Câu 1 / 16</span>
-                </div>
-
-                <div id="question-type-badge" class="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-md mb-3">Phần 1: Trắc nghiệm 4 lựa chọn</div>
-                
-                <div id="question-content" class="text-lg font-medium text-gray-900 mb-6 leading-relaxed"></div>
-
-                <!-- Options -->
-                <div id="mc-options" class="space-y-3 mb-6"></div>
-                <div id="tf-options" class="space-y-4 mb-6 hidden"></div>
-                <div id="short-answer-box" class="mb-6 hidden">
-                    <input type="text" id="short-input" placeholder="Nhập kết quả của bạn..." class="w-full p-4 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none text-lg">
-                </div>
-
-                <div id="explanation-box" class="hidden p-4 rounded-xl mb-6 text-sm"></div>
-
-                <div class="flex justify-between items-center pt-4 border-t">
-                    <button onclick="showHint()" class="text-sm text-amber-600 font-semibold hover:underline">💡 Xem gợi ý</button>
-                    <button id="action-btn" onclick="handleAction()" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition shadow-md">Kiểm tra đáp án</button>
-                </div>
-            </div>
-
-            <!-- Screen 3: Result -->
-            <div id="result-screen" class="hidden text-center py-8">
-                <div class="text-6xl mb-4">🏆</div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Đã hoàn thành bài ôn tập!</h2>
-                <p id="final-score" class="text-4xl font-extrabold text-blue-600 mb-4">0 điểm</p>
-                <p id="result-comment" class="text-gray-600 mb-8">Chúc mừng bạn! Hãy tiếp tục tự tin ôn thi nhé.</p>
-                <button onclick="resetApp()" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition">Làm Bài Khác</button>
-            </div>
-        </main>
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchSection('cn1')">Công Nghệ 9 (Đề 1)</button>
+        <button class="tab-btn" onclick="switchSection('cn2')">Công Nghệ 9 (Đề 2)</button>
+        <button class="tab-btn" onclick="switchSection('cn3')">Công Nghệ 9 (Đề 3)</button>
+        <button class="tab-btn" onclick="switchSection('cn_all')">Tổng hợp 3 Đề Công Nghệ</button>
+        <button class="tab-btn" onclick="switchSection('lichsu')">Lịch Sử 9</button>
+        <button class="tab-btn" onclick="switchSection('dialy')">Địa Lý 9</button>
     </div>
 
-    <script>
-        let currentSubject = 'khtn';
+    <div id="result-display" class="result-box"></div>
 
-        const dbKHTN = {
-            1: [
-                { type: 'mc', q: "Thiết bị nào sau đây dùng để đo cường độ dòng điện trong mạch điện thí nghiệm KHTN 9?", opts: ["Vôn kế.", "Ampe kế.", "Nhiệt kế.", "Lực kế."], correct: 1, hint: "Mắc nối tiếp trong mạch để đo cường độ dòng điện.", rationale: "Ampe kế dùng để đo cường độ dòng điện." },
-                { type: 'mc', q: "Biển báo cảnh báo có hình ngọn lửa kèm theo chất lỏng trong phòng thực hành KHTN cảnh báo điều gì?", opts: ["Hóa chất ăn mòn kim loại.", "Hóa chất độc hại với môi trường.", "Chất dễ cháy, nổ.", "Chất phóng xạ nguy hiểm."], correct: 2, hint: "Ngọn lửa tượng trưng cho tính cháy nổ.", rationale: "Biển báo này cảnh báo chất dễ cháy, nổ." },
-                { type: 'mc', q: "Khi làm báo cáo thực hành khoa học, bước nào sau đây thể hiện việc phân tích và giải thích các kết quả thu thập được?", opts: ["Viết mục tiêu và dụng cụ thực hành.", "Tiến hành các thao tác theo từng bước.", "Xử lí số liệu, nhận xét và rút ra kết luận.", "Dọn dẹp dụng cụ và vệ sinh phòng thực hành."], correct: 2, hint: "Bước tổng kết và đánh giá kết quả.", rationale: "Xử lí số liệu, nhận xét và rút ra kết luận là bước phân tích kết quả." },
-                { type: 'mc', q: "Động năng của một vật phụ thuộc vào những yếu tố nào?", opts: ["Khối lượng và độ cao của vật.", "Khối lượng và vận tốc của vật.", "Vận tốc và độ cao của vật.", "Thể tích và trọng lượng của vật."], correct: 1, hint: "Công thức $W_d = \\frac{1}{2}mv^2$.", rationale: "Động năng phụ thuộc vào khối lượng và vận tốc của vật." },
-                { type: 'mc', q: "Đơn vị nào sau đây là đơn vị đo công suất?", opts: ["(J).", "(N).", "(W).", "(J/s^2)."], correct: 2, hint: "Đơn vị Oát.", rationale: "Công suất đo bằng Oát (W)." },
-                { type: 'mc', q: "Hiện tượng khúc xạ ánh sáng là hiện tượng", opts: ["tia sáng bị gãy khúc tại mặt phân cách giữa hai môi trường trong suốt khi truyền xiên góc.", "tia sáng bị hắt ngược trở lại môi trường cũ khi gặp mặt gương.", "tia sáng bị biến mất hoàn toàn khi đi vào môi trường thứ hai.", "tia sáng truyền thẳng qua mọi môi trường mà không đổi hướng."], correct: 0, hint: "Gãy khúc tại mặt phân cách.", rationale: "Khúc xạ ánh sáng là hiện tượng tia sáng bị gãy khúc khi truyền xiên góc qua mặt phân cách." },
-                { type: 'mc', q: "Chiết suất của một môi trường trong suốt được xác định bằng tỉ số giữa", opts: ["tốc độ ánh sáng trong môi trường đó với tốc độ ánh sáng trong chân không.", "góc khúc xạ và góc tới của tia sáng.", "tốc độ ánh sáng trong chân không với tốc độ ánh sáng trong môi trường đó.", "tần số ánh sáng trong môi trường đó với tần số trong chân không."], correct: 2, hint: "$n = c / v$.", rationale: "Chiết suất bằng tỉ số tốc độ ánh sáng trong chân không với tốc độ trong môi trường." },
-                { type: 'mc', q: "Điểm mà chùm tia tới song song với trục chính của thấu kính hội tụ sau khi đi qua thấu kính hội tụ lại được gọi là:", opts: ["quang tâm của thấu kính.", "tiêu cự của thấu kính.", "tiêu điểm phụ của thấu kính.", "tiêu điểm chính của thấu kính."], correct: 3, hint: "Điểm hội tụ trên trục chính.", rationale: "Đó là tiêu điểm chính của thấu kính hội tụ." },
-                { type: 'mc', q: "Ánh sáng nào sau đây không bị lăng kính làm tán sắc: Ánh sáng trắng (I); Đỏ (II); Vàng (III); Tím (IV)?", opts: ["I; II; III; IV", "II; III; IV", "I; II; IV", "I; II; III"], correct: 1, hint: "Ánh sáng đơn sắc không bị tán sắc.", rationale: "Đỏ, vàng, tím là các ánh sáng đơn sắc nên không bị tán sắc." },
-                { type: 'mc', q: "Công thức tính điện trở dây dẫn là:", opts: ["$R = \\rho \\frac{S}{l}$", "$R = \\frac{S}{\\rho l}$", "$R = \\frac{l}{\\rho S}$", "$R = \\rho \\frac{l}{S}$"], correct: 3, hint: "Tỉ lệ thuận chiều dài, tỉ lệ nghịch tiết diện.", rationale: "Công thức: $R = \\rho \\frac{l}{S}$." },
-                { type: 'mc', q: "Đoạn mạch gồm hai điện trở $R_1, R_2$ mắc song song có điện trở tương đương là:", opts: ["$R_1 + R_2$", "$R_1 R_2$", "$\\frac{R_1 R_2}{R_1 + R_2}$", "$\\frac{R_1 + R_2}{R_1 R_2}$"], correct: 2, hint: "Tích chia tổng.", rationale: "Công thức mạch song song: $\\frac{R_1 R_2}{R_1 + R_2}$." },
-                { type: 'mc', q: "Dòng điện cảm ứng xuất hiện trong cuộn dây dẫn kín khi:", opts: ["cuộn dây nằm yên trong từ trường đều.", "số đường sức từ xuyên qua tiết diện cuộn dây biến thiên.", "đặt cuộn dây gần nam châm đứng yên.", "nối hai đầu cuộn dây với nguồn điện không đổi."], correct: 1, hint: "Số đường sức từ biến thiên.", rationale: "Số đường sức từ xuyên qua tiết diện cuộn dây biến thiên sinh ra dòng điện cảm ứng." },
-                { type: 'mc', q: "Nguyên tắc tạo ra dòng điện xoay chiều dựa trên hiện tượng nào?", opts: ["Hiện tượng bức xạ nhiệt.", "Hiện tượng cảm ứng điện từ.", "Hiện tượng phản xạ ánh sáng.", "Hiện tượng nhiễm điện do ma sát."], correct: 1, hint: "Hiện tượng cảm ứng điện từ.", rationale: "Dựa trên hiện tượng cảm ứng điện từ." },
-                { type: 'mc', q: "Tác dụng nào sau đây không phải là tác dụng của dòng điện xoay chiều?", opts: ["Tác dụng quang (phát sáng).", "Tác dụng từ.", "Tác dụng nhiệt.", "Tác dụng mạ điện (điện phân không đổi cực)."], correct: 3, hint: "Dòng xoay chiều không mạ điện được.", rationale: "Dòng xoay chiều không dùng mạ điện vì cực đổi liên tục." },
-                { type: 'mc', q: "Dòng điện xoay chiều chạy qua bóng đèn sợi đốt làm dây tóc nóng sáng rực lên. Đây là ứng dụng chủ yếu của:", opts: ["tác dụng từ.", "tác dụng nhiệt và tác dụng phát sáng.", "tác dụng hóa học.", "tác dụng sinh lí."], correct: 1, hint: "Nóng lên và phát sáng.", rationale: "Ứng dụng tác dụng nhiệt và phát sáng." },
-                { type: 'mc', q: "Thiết bị nào sau đây hoạt động dựa trên tác dụng từ của dòng điện xoay chiều?", opts: ["Bàn là điện.", "Nồi cơm điện.", "Quạt điện gia dụng (động cơ điện xoay chiều).", "Ấm đun nước siêu tốc."], correct: 2, hint: "Có động cơ điện bên trong.", rationale: "Quạt điện hoạt động dựa trên tác dụng từ." },
-                { 
-                    type: 'tf', 
-                    q: "Câu 17: Thí nghiệm nghiên cứu sự truyền ánh sáng và thấu kính:", 
-                    sub: [
-                        { text: "Tia sáng truyền từ không khí vào nước luôn có góc khúc xạ lớn hơn góc tới.", ans: false },
-                        { text: "Kính lúp là một thấu kính hội tụ có tiêu cự ngắn, dùng quan sát các vật nhỏ.", ans: true },
-                        { text: "Phản xạ toàn phần chỉ xảy ra khi truyền từ môi trường chiết suất lớn sang nhỏ và $i \\ge i_{gh}$.", ans: true },
-                        { text: "Vật AB vuông góc trục chính thấu kính hội tụ f=12cm, d=24cm cho ảnh thật, ngược chiều, cao bằng vật.", ans: true }
-                    ],
-                    hint: "Đặc điểm thấu kính và định luật khúc xạ.",
-                    rationale: "a) Sai vì từ không khí vào nước $r < i$. b, c, d đúng."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 18: Mạch điện gồm $R_1 = 10\\Omega$ và $R_2 = 15\\Omega$ mắc nối tiếp vào hiệu điện thế $U = 12V$:", 
-                    sub: [
-                        { text: "Điện trở tương đương của đoạn mạch: $R_{td} = R_1 + R_2$.", ans: true },
-                        { text: "Cường độ dòng điện chạy qua $R_1$ lớn hơn cường độ dòng điện qua $R_2$.", ans: false },
-                        { text: "Hiệu điện thế giữa hai đầu điện trở $R_1$ có giá trị bằng 4,8 V.", ans: true },
-                        { text: "Nhiệt lượng tỏa ra trên đoạn mạch trong 10 phút là 3456 J.", ans: true }
-                    ],
-                    hint: "Mắc nối tiếp thì $I_1 = I_2$.",
-                    rationale: "b) Sai vì mạch nối tiếp cường độ dòng điện qua các phần tử bằng nhau."
-                },
-                { type: 'short', q: "Câu 19. Vật AB cao 4 cm qua thấu kính hội tụ tạo ảnh thật A'B' ngược chiều cao 8 cm. Số phóng đại chiều cao ảnh so với vật ($A'B'/AB$) bằng bao nhiêu?", correct: "2", hint: "Chia 8 cho 4.", rationale: "Tỉ số $\\frac{8}{4} = 2$." },
-                { type: 'short', q: "Câu 20. Chiếu tia sáng từ không khí vào thủy tinh chiết suất $n = \\sqrt{2}$, góc khúc xạ $r = 30^{\\circ}$. Tính góc tới $i$ theo độ (chỉ điền số).", correct: "45", hint: "$\\sin i = \\sqrt{2} \\cdot \\sin 30^{\\circ}$.", rationale: "$\\sin i = \\frac{\\sqrt{2}}{2} \\Rightarrow i = 45^{\\circ}$." },
-                { type: 'short', q: "Câu 21. Đoạn mạch gồm hai điện trở $R_1 = 20\\Omega, R_2 = 30\\Omega$ mắc song song. Tính điện trở tương đương theo ôm (chỉ điền số).", correct: "12", hint: "$R_{td} = \\frac{20 \\cdot 30}{20 + 30}$.", rationale: "$\\frac{600}{50} = 12\\Omega$." },
-                { type: 'short', q: "Câu 22. Khi dòng điện xoay chiều 50 Hz qua cuộn dây nam châm điện thì lực hút từ đổi chiều biến thiên bao nhiêu lần trong 1 giây?", correct: "100", hint: "Lấy $2 \\times 50$.", rationale: "Số lần đổi chiều bằng $2 \\times f = 100$ lần." }
-            ],
-            2: [
-                { type: 'mc', q: "Dụng cụ nào sau đây dùng để đo thể tích chất lỏng trong phòng thí nghiệm?", opts: ["Phễu thủy tinh.", "Ống đong.", "Đũa thủy tinh.", "Kẹp ống nghiệm."], correct: 1, hint: "Ống đong chia độ.", rationale: "Ống đong dùng để đo thể tích chất lỏng." },
-                { type: 'mc', q: "Trên nhãn chai hóa chất có biểu tượng cảnh báo hình ngọn lửa cho biết hóa chất đó:", opts: ["Dễ cháy.", "Ăn mòn kim loại và da.", "Độc hại đối với sức khỏe.", "Gây nguy hiểm cho môi trường."], correct: 0, hint: "Hình ngọn lửa.", rationale: "Biểu tượng ngọn lửa cảnh báo chất dễ cháy." },
-                { type: 'mc', q: "Thông thường bài báo cáo một vấn đề khoa học có cấu trúc như thế nào?", opts: ["Gồm tiêu đề, phương pháp, thảo luận và kết quả.", "Gồm tiêu đề, tóm tắt, giới thiệu, phương pháp, kết luận, tài liệu tham khảo, thảo luận và kết quả.", "Gồm tiêu đề, tóm tắt, giới thiệu, phương pháp, thảo luận và kết quả.", "Gồm tiêu đề, phương pháp, thảo luận, kết luận và kết quả."], correct: 1, hint: "Cấu trúc đầy đủ chuẩn báo cáo khoa học.", rationale: "Báo cáo khoa học gồm đầy đủ các mục chuẩn." },
-                { type: 'mc', q: "Cơ năng của vật khối lượng m, tốc độ v ở độ cao h được tính bằng:", opts: ["$W = \\frac{1}{2}mv^2 - 10mh$", "$W = mv^2 + 10mh$", "$W = \\frac{1}{2}mv^2 + 10mh$", "$W = \\frac{1}{2}mv + 10mh$"], correct: 2, hint: "Tổng động năng và thế năng.", rationale: "$W = W_d + W_t = \\frac{1}{2}mv^2 + 10mh$." },
-                { type: 'mc', q: "Trong các đơn vị sau, đơn vị nào không dùng để đo công suất?", opts: ["Oát (W).", "Kilôoát (kW).", "Jun trên giây (J/s).", "Jun (J)."], correct: 3, hint: "Jun là đơn vị đo công.", rationale: "Jun (J) là đơn vị đo công hoặc năng lượng, không phải công suất." },
-                { type: 'mc', q: "Chiết suất n của môi trường có tốc độ ánh sáng v được tính bằng:", opts: ["$n = c / v$", "$n = v / c$", "$n = c \\cdot v$", "$n = c - v$"], correct: 0, hint: "$n = c / v$.", rationale: "Chiết suất $n = c / v$." },
-                { type: 'mc', q: "Khi chiếu bằng ánh sáng trắng, một vật nhìn thấy màu đỏ vì vật đó:", opts: ["hấp thụ ánh sáng đỏ.", "phản xạ ánh sáng đỏ và hấp thụ các màu khác.", "cho ánh sáng trắng truyền qua hoàn toàn.", "tự phát ra ánh sáng đỏ."], correct: 1, hint: "Phản xạ ánh sáng màu nào thì ta thấy màu đó.", rationale: "Vật phản xạ ánh sáng đỏ nên ta nhìn thấy vật màu đỏ." },
-                { type: 'mc', q: "Kính lúp là:", opts: ["thấu kính phân kì tiêu cự ngắn.", "thấu kính phân kì tiêu cự dài.", "thấu kính hội tụ tiêu cự ngắn.", "thấu kính hội tụ tiêu cự dài."], correct: 2, hint: "Thấu kính hội tụ f ngắn.", rationale: "Kính lúp là thấu kính hội tụ có tiêu cự ngắn." },
-                { type: 'mc', q: "Chiếu chùm ánh sáng trắng qua lăng kính thu được dải màu liên tục vì:", opts: ["Lăng kính nhuộm màu.", "Ánh sáng trắng gồm nhiều màu, lăng kính làm lệch các ánh sáng màu khác nhau.", "Lăng kính tự phát ra ánh sáng.", "Phản xạ toàn phần."], correct: 1, hint: "Tán sắc ánh sáng.", rationale: "Ánh sáng trắng là hỗn hợp nhiều màu, bị lăng kính lệch các mức độ khác nhau." },
-                { type: 'mc', q: "Điện trở R của dây dẫn được tính bằng công thức:", opts: ["$R = \\rho \\frac{l}{S}$", "$R = \\rho \\frac{S}{l}$", "$R = \\frac{l}{\\rho S}$", "$R = \\rho \\cdot l \\cdot S$"], correct: 0, hint: "Tỉ lệ thuận với l.", rationale: "$R = \\rho \\frac{l}{S}$." },
-                { type: 'mc', q: "Hai điện trở $R_1, R_2$ mắc song song. Điện trở tương đương $R_{td}$ tính bằng:", opts: ["$R_{td} = R_1 + R_2$", "$R_{td} = \\frac{1}{R_1} + \\frac{1}{R_2}$", "$\\frac{1}{R_{td}} = \\frac{1}{R_1} + \\frac{1}{R_2}$", "$R_{td} = \\frac{R_1 R_2}{R_1 - R_2}$"], correct: 2, hint: "Cộng nghịch đảo.", rationale: "$\\frac{1}{R_{td}} = \\frac{1}{R_1} + \\frac{1}{R_2}$." },
-                { type: 'mc', q: "Dòng điện cảm ứng xuất hiện trong cuộn dây dẫn kín khi:", opts: ["đặt cuộn dây trong từ trường mạnh.", "đặt cuộn dây đứng yên cạnh nam châm.", "nối với hai cực của pin.", "số đường sức từ xuyên qua tiết diện cuộn dây biến thiên."], correct: 3, hint: "Từ thông biến thiên.", rationale: "Số đường sức từ biến thiên sinh ra dòng điện cảm ứng." },
-                { type: 'mc', q: "Nguyên tắc tạo ra dòng điện xoay chiều là:", opts: ["cho nam châm đứng yên trong cuộn dây.", "cho cuộn dây dẫn kín quay trong từ trường (hoặc nam châm quay trước cuộn dây).", "cho cuộn dây đứng yên.", "cho dòng điện không đổi qua cuộn dây."], correct: 1, hint: "Quay cuộn dây hoặc nam châm.", rationale: "Cho cuộn dây quay trong từ trường hoặc nam châm quay trước cuộn dây." },
-                { type: 'mc', q: "Phát biểu nào sau đây về tác dụng của dòng điện xoay chiều là đúng?", opts: ["Chỉ có tác dụng nhiệt.", "Không có tác dụng từ.", "Có tác dụng nhiệt, phát sáng, từ và sinh lí.", "Không có tác dụng sinh lí."], correct: 2, hint: "Gồm 4 tác dụng chính.", rationale: "Dòng điện xoay chiều có đầy đủ tác dụng nhiệt, phát sáng, từ và sinh lí." },
-                { type: 'mc', q: "Ví dụ chứng tỏ dòng điện xoay chiều có tác dụng từ:", opts: ["Bàn là điện nóng lên.", "Bóng đèn huỳnh quang phát sáng.", "Nồi cơm điện làm chín cơm.", "Cuộn dây có lõi sắt non hút được đinh sắt."], correct: 3, hint: "Hút đinh sắt.", rationale: "Hút đinh sắt là thể hiện tác dụng từ." },
-                { type: 'mc', q: "Chạm tay vào dây điện hở bị giật chứng tỏ dòng điện xoay chiều có tác dụng:", opts: ["sinh lí.", "nhiệt.", "phát sáng.", "từ."], correct: 0, hint: "Gây giật điện.", rationale: "Hiện tượng bị giật điện là tác dụng sinh lí." },
-                { 
-                    type: 'tf', 
-                    q: "Câu 17: Tia sáng truyền từ không khí vào nước ($n = 4/3$):", 
-                    sub: [
-                        { text: "Tia sáng truyền từ không khí vào nước có thể bị khúc xạ tại mặt phân cách.", ans: true },
-                        { text: "Chiết suất của nước đối với không khí bằng 4/3.", ans: true },
-                        { text: "Khi truyền xiên từ không khí vào nước, tia khúc xạ lệch xa pháp tuyến hơn tia tới.", ans: false },
-                        { text: "Tia sáng truyền từ không khí vào nước với góc tới $30^{\\circ}$, góc khúc xạ xấp xỉ $22^{\\circ}$.", ans: true }
-                    ],
-                    hint: "Tia khúc xạ lệch lại gần pháp tuyến.",
-                    rationale: "c) Sai vì từ môi trường kém chiết quang sang môi trường chiết quang hơn thì tia khúc xạ lệch lại gần pháp tuyến."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 18: Bóng đèn 6V - 3W mắc nối tiếp với $R = 12\\Omega$ vào nguồn 12V:", 
-                    sub: [
-                        { text: "Số 3W là công suất điện định mức của bóng đèn.", ans: true },
-                        { text: "Khi mắc nối tiếp, cường độ dòng điện qua bóng đèn và điện trở là như nhau.", ans: true },
-                        { text: "Điện trở toàn mạch bằng $12\\Omega$ vì dòng điện qua các phần tử như nhau.", ans: false },
-                        { text: "Để bóng đèn sáng bình thường, cường độ dòng điện qua bóng đèn phải đạt 2A.", ans: false }
-                    ],
-                    hint: "$I_{dm} = P/U = 3/6 = 0,5A$.",
-                    rationale: "c và d Sai. Điện trở tổng $R_{td} = R_{den} + R = 12 + 12 = 24\\Omega$; $I_{dm} = 0,5A$."
-                },
-                { type: 'short', q: "Câu 19. Vật AB đặt cách thấu kính hội tụ (f = 10cm) một khoảng 20cm ($d = 2f$). Khoảng cách từ ảnh đến thấu kính là bao nhiêu cm?", correct: "20", hint: "Khi $d = 2f$ thì $d' = 2f = 20cm$.", rationale: "Ảnh thật cách thấu kính $d' = 20cm$." },
-                { type: 'short', q: "Câu 20. Tia sáng truyền từ không khí vào chất lỏng với góc tới $45^{\\circ}$, góc khúc xạ $30^{\\circ}$. Chiết suất chất lỏng là bao nhiêu?", correct: "1.41", hint: "$n = \\sin 45^{\\circ} / \\sin 30^{\\circ} = \\sqrt{2} \\approx 1.41$.", rationale: "$n = 1,41$." },
-                { type: 'short', q: "Câu 21. Cho mạch gồm $R_1 = 4\\Omega, R_2 = 6\\Omega$ mắc nối tiếp. Điện trở tương đương là bao nhiêu ôm?", correct: "10", hint: "$R_{td} = R_1 + R_2 = 4 + 6$.", rationale: "$R_{td} = 10\\Omega$." },
-                { type: 'short', q: "Câu 22. Trong các thiết bị: bàn là, quạt, đèn LED, ấm đun, nồi cơm, máy bơm. Có bao nhiêu thiết bị hoạt động chủ yếu dựa trên tác dụng nhiệt?", correct: "3", hint: "Bàn là, ấm đun, nồi cơm.", rationale: "Có 3 thiết bị: bàn là điện, ấm đun nước điện, nồi cơm điện." }
-            ],
-            3: [
-                { type: 'mc', q: "Vôn kế dùng để làm gì?", opts: ["Phát hiện dòng điện cảm ứng.", "Đo hiệu điện thế.", "Đo cường độ dòng điện.", "Đo điện trở."], correct: 1, hint: "Đo hiệu điện thế (V).", rationale: "Vôn kế dùng để đo hiệu điện thế." },
-                { type: 'mc', q: "Dụng cụ dùng để thực hiện một số phản ứng tỏa nhiệt mạnh là:", opts: ["Bát sứ.", "Phễu.", "Bình cầu.", "Lưới tản nhiệt."], correct: 0, hint: "Chịu nhiệt tốt.", rationale: "Bát sứ chịu nhiệt cao dùng thực hiện phản ứng tỏa nhiệt mạnh." },
-                { type: 'mc', q: "Mô tả phương pháp nghiên cứu, công việc chuẩn bị nằm trong bước nào của báo cáo khoa học?", opts: ["Đưa ra phương pháp và kế hoạch nghiên cứu.", "Xác định mục đích nghiên cứu.", "Thực hiện nghiên cứu, thu thập số liệu.", "Nêu câu hỏi nghiên cứu."], correct: 0, hint: "Phương pháp và kế hoạch.", rationale: "Nằm trong bước Đưa ra phương pháp và kế hoạch nghiên cứu." },
-                { type: 'mc', q: "Biểu thức tính động năng của một vật là:", opts: ["$W_d = \\frac{1}{2}mv^2$", "$W_d = \\frac{1}{2}mv$", "$W_d = mv^2$", "$W_d = mv$"], correct: 0, hint: "$W_d = \\frac{1}{2}mv^2$.", rationale: "Công thức động năng: $W_d = \\frac{1}{2}mv^2$." },
-                { type: 'mc', q: "Trong công thức định luật Ohm, đơn vị của cường độ dòng điện là:", opts: ["Vôn (V).", "Ampe (A).", "Ôm ($\\Omega$).", "Oát (W)."], correct: 1, hint: "Ampe.", rationale: "Cường độ dòng điện đo bằng Ampe (A)." },
-                { type: 'mc', q: "Hiện tượng khúc xạ ánh sáng là hiện tượng:", opts: ["tia sáng bị gãy khúc tại mặt phân cách hai môi trường.", "tia sáng bị hắt ngược lại.", "tia sáng biến mất.", "tia sáng truyền thẳng."], correct: 0, hint: "Gãy khúc tại mặt phân cách.", rationale: "Tia sáng bị gãy khúc tại mặt phân cách hai môi trường trong suốt." },
-                { type: 'mc', q: "Chiếu ánh sáng qua lăng kính thu được duy nhất một màu thì chùm sáng đó là:", opts: ["Chùm sáng trắng.", "Chùm sáng màu đỏ.", "Chùm sáng đơn sắc.", "Chùm sáng màu lục."], correct: 2, hint: "Chỉ có 1 màu = đơn sắc.", rationale: "Ánh sáng đơn sắc không bị tán sắc khi qua lăng kính." },
-                { type: 'mc', q: "Chùm tia tới song song trục chính qua thấu kính hội tụ ló ra đi qua:", opts: ["Quang tâm.", "Tiêu cự.", "Tiêu điểm phụ.", "Tiêu điểm chính."], correct: 3, hint: "Tiêu điểm chính.", rationale: "Hội tụ tại tiêu điểm chính của thấu kính." },
-                { type: 'mc', q: "Chiếu tia sáng màu vàng đến lăng kính thì tia ló ra có màu:", opts: ["Đỏ.", "Vàng.", "Lục.", "Tím."], correct: 1, hint: "Ánh sáng vàng là đơn sắc.", rationale: "Ánh sáng đơn sắc màu vàng giữ nguyên màu vàng khi ló ra." },
-                { type: 'mc', q: "Biểu thức đúng của định luật Ohm là:", opts: ["$R = U / I$", "$I = U / R$", "$I = R / U$", "$U = I \\cdot R$"], correct: 1, hint: "$I = U / R$.", rationale: "Định luật Ohm: $I = \\frac{U}{R}$." },
-                { type: 'mc', q: "Đoạn mạch $R_1, R_2$ mắc song song có điện trở tương đương là:", opts: ["$R_1 + R_2$", "$R_1 R_2$", "$\\frac{R_1 R_2}{R_1 + R_2}$", "$\\frac{R_1 + R_2}{R_1 R_2}$"], correct: 2, hint: "Tích chia tổng.", rationale: "$R_{td} = \\frac{R_1 R_2}{R_1 + R_2}$." },
-                { type: 'mc', q: "Phát biểu nào KHÔNG đúng đối với đoạn mạch gồm các điện trở mắc nối tiếp?", opts: ["Cường độ dòng điện như nhau tại mọi vị trí.", "Hiệu điện thế hai đầu mạch bằng tổng các hiệu điện thế.", "Hiệu điện thế hai đầu mạch bằng hiệu điện thế mỗi điện trở.", "Hiệu điện thế tỉ lệ thuận với điện trở."], correct: 2, hint: "Mắc nối tiếp thì $U = U_1 + U_2$.", rationale: "Ý C sai vì mắc nối tiếp hiệu điện thế tổng bằng tổng các hiệu điện thế thành phần." },
-                { type: 'mc', q: "Điện trở R của dây dẫn biểu thị cho:", opts: ["Mức độ cản trở dòng điện của dây dẫn.", "Mức độ cản trở hiệu điện thế.", "Tính cản trở electron.", "Tính cản trở dây dẫn."], correct: 0, hint: "Cản trở dòng điện.", rationale: "Đại lượng đặc trưng cho sự cản trở dòng điện của dây dẫn." },
-                { type: 'mc', q: "Tác dụng nhiệt của dòng điện xoay chiều có lợi trong dụng cụ nào?", opts: ["Nồi cơm điện.", "Quạt điện.", "Tivi.", "Máy bơm nước."], correct: 0, hint: "Dùng để đun nấu.", rationale: "Nồi cơm điện biến điện năng thành nhiệt năng có lợi." },
-                { type: 'mc', q: "Dòng điện xoay chiều KHÔNG có tác dụng nào?", opts: ["Tác dụng từ.", "Tác dụng nhiệt.", "Tác dụng sinh lý.", "Tác dụng hóa học (mạ điện không đổi cực)."], correct: 3, hint: "Không dùng để mạ điện.", rationale: "Dòng xoay chiều đổi chiều liên tục nên không dùng để điện phân mạ điện cố định." },
-                { type: 'mc', q: "Dòng điện qua thiết bị nào làm thiết bị phát sáng?", opts: ["Quạt điện.", "Nồi cơm điện.", "Bàn là.", "Đèn LED."], correct: 3, hint: "Đèn LED.", rationale: "Đèn LED phát sáng khi có dòng điện chạy qua." },
-                { 
-                    type: 'tf', 
-                    q: "Câu 17: Tia tới song song trục chính thấu kính cho tia ló kéo dài cắt trục chính tại điểm cách O 15cm:", 
-                    sub: [
-                        { text: "Thấu kính đã cho là thấu kính hội tụ.", ans: false },
-                        { text: "Tiêu cự của thấu kính là 15cm.", ans: true },
-                        { text: "Khoảng cách giữa hai tiêu điểm của thấu kính là 15cm.", ans: false },
-                        { text: "Thấu kính phân kỳ luôn cho ảnh ảo, cùng chiều và nhỏ hơn vật.", ans: true }
-                    ],
-                    hint: "Tia ló kéo dài cắt trục chính là thấu kính phân kỳ.",
-                    rationale: "a) Sai (là TK phân kỳ). b) Đúng ($f=15cm$). c) Sai (khoảng cách $2f = 30cm$). d) Đúng."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 18: Mắc nối tiếp 2 bình acquy 12V chạy đèn (24V-75W) và quạt (24V-5W):", 
-                    sub: [
-                        { text: "Khi mắc nối tiếp 2 bình 12V thì hiệu điện thế tương đương là 24V.", ans: true },
-                        { text: "Điện trở của đèn (24V-75W) là $3,125\\Omega$.", ans: false },
-                        { text: "Để đèn và quạt hoạt động đúng công suất nên lắp song song.", ans: true },
-                        { text: "Điện năng tiêu thụ trong 1 giờ hoạt động bình thường là 288.000 J.", ans: false }
-                    ],
-                    hint: "$R = U^2/P = 24^2/75 = 7,68\\Omega$.",
-                    rationale: "b) Sai vì $R = 7,68\\Omega$. d) Sai vì $A = (75+5) \\cdot 3600 = 288.000J$."
-                },
-                { type: 'short', q: "Câu 19. Chiết suất thủy tinh là 1,5. Góc tới hạn phản xạ toàn phần sang không khí xấp xỉ bao nhiêu độ?", correct: "41.8", hint: "$\\sin i_{gh} = 1/1.5 \\Rightarrow i_{gh} \\approx 41,8^{\\circ}$.", rationale: "$i_{gh} \\approx 41,8^{\\circ}$." },
-                { type: 'short', q: "Câu 20. Lăng kính $n = 4/3$, chiếu vuông góc góc lệch $D = 15^{\\circ}$. Góc chiết quang A xấp xỉ bao nhiêu độ?", correct: "35.2", hint: "Tính theo công thức lăng kính.", rationale: "Góc $A \\approx 35,2^{\\circ}$." },
-                { type: 'short', q: "Câu 21. Khi U = 2V thì I = 0,4A. Để I = 0,8A thì U bằng bao nhiêu V (chỉ điền số)?", correct: "4", hint: "Tỉ lệ thuận $U_2 = U_1 \\times (I_2 / I_1) = 2 \\times 2 = 4V$.", rationale: "Hiệu điện thế tăng gấp đôi thành 4V." },
-                { type: 'short', q: "Câu 22. Đèn 100W dùng 5h/ngày, bếp 1000W dùng 2h/ngày. Giá 1kWh là 1100đ. Tiền điện 30 ngày là bao nhiêu nghìn đồng?", correct: "82.5", hint: "Tổng kWh = $(0.1\\times 5 + 1\\times 2)\\times 30 = 75$ kWh. Tiền = $75 \\times 1.1 = 82,5$.", rationale: "$82,5$ nghìn đồng." }
-            ],
-            4: [
-                { type: 'mc', q: "Câu 1. Dụng cụ nào sau đây thường được sử dụng để đo thể tích chất lỏng trong phòng thực hành KHTN?", opts: ["Cân điện tử.", "Ống đong (có chia độ).", "Nhiệt kế thủy ngân.", "Lực kế lò xo."], correct: 1, hint: "Dụng cụ có vạch chia độ đo thể tích.", rationale: "Ống đong được dùng để đo thể tích chất lỏng." },
-                { type: 'mc', q: "Câu 2. Khi sử dụng hóa chất trong phòng thí nghiệm, quy tắc an toàn nào sau đây là ĐÚNG?", opts: ["Nếm thử hóa chất để xác định vị.", "Dùng tay trực tiếp bốc hóa chất dạng bột.", "Đọc kỹ nhãn mác và dùng dụng cụ lấy hóa chất phù hợp.", "Đổ hóa chất thừa trực tiếp vào bồn rửa."], correct: 2, hint: "Luôn đọc kỹ nhãn mác an toàn.", rationale: "Phải đọc kỹ nhãn mác và dùng dụng cụ phù hợp." },
-                { type: 'mc', q: "Câu 3. Thứ tự các bước cơ bản trong trình bày báo cáo bài thực hành KHTN:", opts: ["Kết luận -> Tên đề tài -> Phương pháp -> Kết quả.", "Tên đề tài -> Mục tiêu -> Phương pháp/Tiến hành -> Kết quả -> Kết luận.", "Kết quả -> Mục tiêu -> Tên đề tài -> Kết luận.", "Mục tiêu -> Kết luận -> Phương pháp -> Tên đề tài."], correct: 1, hint: "Thứ tự từ tên đề tài đến kết luận.", rationale: "Quy trình báo cáo chuẩn khoa học." },
-                { type: 'mc', q: "Câu 4. Biểu thức tính động năng của một vật khối lượng m đang chuyển động với vận tốc v là:", opts: ["$W_d = m \\cdot v$", "$W_d = \\frac{1}{2}m v^2$", "$W_d = m \\cdot g \\cdot h$", "$W_d = \\frac{1}{2}v m^2$"], correct: 1, hint: "Công thức $W_d = \\frac{1}{2}mv^2$.", rationale: "Công thức tính động năng là $W_d = \\frac{1}{2}mv^2$." },
-                { type: 'mc', q: "Câu 5. Công suất P là đại lượng đặc trưng cho tốc độ thực hiện công, được tính bằng công thức:", opts: ["$P = A \\cdot t$", "$P = A / t$", "$P = t / A$", "$P = A + t$"], correct: 1, hint: "Công chia cho thời gian.", rationale: "$P = A / t$." },
-                { type: 'mc', q: "Câu 6. Hiện tượng ánh sáng bị gãy khúc khi truyền xiên góc từ môi trường trong suốt này sang môi trường trong suốt khác gọi là:", opts: ["Phản xạ ánh sáng.", "Khúc xạ ánh sáng.", "Tán sắc ánh sáng.", "Phản xạ toàn phần."], correct: 1, hint: "Tia sáng bị lệch phương.", rationale: "Đó là hiện tượng khúc xạ ánh sáng." },
-                { type: 'mc', q: "Câu 7. Chiết suất n của một môi trường trong suốt so với chân không được xác định bởi tỉ số:", opts: ["$n = v / c$", "$n = c / v$", "$n = c \\cdot v$", "$n = c + v$"], correct: 1, hint: "$n = c / v$.", rationale: "Chiết suất $n = c / v$." },
-                { type: 'mc', q: "Câu 8. Khoảng cách từ quang tâm O đến tiêu điểm chính F của thấu kính được gọi là:", opts: ["Trục chính.", "Tiêu cự (f).", "Đường kính thấu kính.", "Độ tụ."], correct: 1, hint: "Ký hiệu là f.", rationale: "Khoảng cách OF được gọi là tiêu cự." },
-                { type: 'mc', q: "Câu 9. Tia sáng truyền từ nước ra ngoài không khí với góc tới i và góc khúc xạ r. Kết luận nào sau đây là ĐÚNG?", opts: ["Góc khúc xạ r nhỏ hơn góc tới i ($r < i$)", "Góc khúc xạ r lớn hơn góc tới i ($r > i$)", "Góc khúc xạ r luôn bằng góc tới i ($r = i$)", "Không có tia khúc xạ."], correct: 1, hint: "Truyền từ môi trường chiết quang sang môi trường kém chiết quang hơn.", rationale: "Khi từ nước ra không khí thì góc khúc xạ $r > i$." },
-                { type: 'mc', q: "Câu 10. Đơn vị nào sau đây là đơn vị đo điện trở trong hệ SI?", opts: ["Ampe (A).", "Vôn (V).", "Ôm ($\\Omega$).", "Oát (W)."], correct: 2, hint: "Ký hiệu $\\Omega$.", rationale: "Đơn vị đo điện trở là Ôm ($\\Omega$)." },
-                { type: 'mc', q: "Câu 11. Đặt hiệu điện thế U vào hai đầu đoạn mạch gồm hai điện trở $R_1$ và $R_2$ mắc nối tiếp. Công thức tính điện trở tương đương $R_{td}$ là:", opts: ["$R_{td} = R_1 + R_2$", "$R_{td} = R_1 \\cdot R_2$", "$\\frac{1}{R_{td}} = \\frac{1}{R_1} + \\frac{1}{R_2}$", "$R_{td} = R_1 / R_2$"], correct: 0, hint: "Mắc nối tiếp cộng trực tiếp.", rationale: "$R_{td} = R_1 + R_2$." },
-                { type: 'mc', q: "Câu 12. Điều kiện để xuất hiện dòng điện cảm ứng trong một cuộn dây dẫn kín là:", opts: ["Đặt cuộn dây trong từ trường đều đứng yên.", "Số đường sức từ xuyên qua tiết diện S của cuộn dây dẫn kín biến thiên.", "Nối hai đầu cuộn dây với một viên pin một chiều.", "Cho cuộn dây đứng yên trong không khí."], correct: 1, hint: "Từ thông biến thiên.", rationale: "Số đường sức từ biến thiên sinh ra dòng điện cảm ứng." },
-                { type: 'mc', q: "Câu 13. Nguyên tắc hoạt động của máy phát điện xoay chiều dựa trên hiện tượng vật lý nào?", opts: ["Hiện tượng cảm ứng điện từ.", "Tác dụng nhiệt của dòng điện.", "Hiện tượng tự cảm.", "Hiện tượng khúc xạ ánh sáng."], correct: 0, hint: "Hiện tượng cảm ứng điện từ.", rationale: "Dựa trên hiện tượng cảm ứng điện từ." },
-                { type: 'mc', q: "Câu 14. Dòng điện xoay chiều trong sinh hoạt gia đình ở Việt Nam có tần số chuẩn là bao nhiêu?", opts: ["60 Hz.", "50 Hz.", "100 Hz.", "220 Hz."], correct: 1, hint: "Tần số điện lưới Việt Nam.", rationale: "Tần số chuẩn của dòng điện sinh hoạt tại Việt Nam là 50 Hz." },
-                { type: 'mc', q: "Câu 15. Dòng điện xoay chiều chạy qua bóng đèn dây tóc làm đèn sáng lên. Đây là ứng dụng dựa trên tác dụng nào?", opts: ["Tác dụng từ.", "Tác dụng sinh lý.", "Tác dụng nhiệt và tác dụng phát sáng.", "Tác dụng hóa học."], correct: 2, hint: "Nóng lên và phát sáng.", rationale: "Ứng dụng tác dụng nhiệt và phát sáng." },
-                { type: 'mc', q: "Câu 16. Khi đưa cực của nam châm chữ U lại gần cuộn dây có dòng điện xoay chiều chạy qua, cuộn dây bị rung lên. Hiện tượng này chứng tỏ dòng điện xoay chiều có:", opts: ["Tác dụng nhiệt.", "Tác dụng từ.", "Tác dụng phát sáng.", "Tác dụng sinh học."], correct: 1, hint: "Tương tác từ làm cuộn dây rung.", rationale: "Hiện tượng cuộn dây bị rung chứng tỏ dòng điện xoay chiều có tác dụng từ." },
-                { 
-                    type: 'tf', 
-                    q: "Câu 17: Cho thấu kính hội tụ $f = 12$ cm, vật AB đặt vuông góc trục chính cách thấu kính $d = 18$ cm:", 
-                    sub: [
-                        { text: "Thấu kính hội tụ là thấu kính có phần rìa mỏng hơn phần giữa.", ans: true },
-                        { text: "Tia sáng đi qua quang tâm O của thấu kính hội tụ tiếp tục truyền thẳng theo phương cũ.", ans: true },
-                        { text: "Khoảng cách $d = 18$ cm thỏa mãn $f < d < 2f$ nên ảnh thu được là ảnh thật, ngược chiều và lớn hơn vật.", ans: true },
-                        { text: "Sử dụng công thức thấu kính $\\frac{1}{f} = \\frac{1}{d} + \\frac{1}{d'}$, tính được $d' = 36$ cm.", ans: true }
-                    ],
-                    hint: "$\\frac{1}{12} = \\frac{1}{18} + \\frac{1}{d'} \\Rightarrow d' = 36$ cm.",
-                    rationale: "Tất cả 4 ý a, b, c, d đều đúng."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 18: Đoạn mạch điện một chiều gồm $R_1 = 10\\Omega$ và $R_2 = 20\\Omega$ mắc nối tiếp vào hiệu điện thế $U = 12$ V:", 
-                    sub: [
-                        { text: "Trong đoạn mạch mắc nối tiếp, cường độ dòng điện qua các điện trở bằng nhau ($I = I_1 = I_2$).", ans: true },
-                        { text: "Điện trở tương đương $R_{td}$ của mạch mắc nối tiếp được tính bằng $R_{td} = R_1 + R_2$.", ans: true },
-                        { text: "Giá trị $R_{td} = 30\\Omega$ và cường độ dòng điện chạy trong mạch chính là $I = 0,4$ A.", ans: true },
-                        { text: "Công suất tiêu thụ $P = 4,8$ W và năng lượng điện mạch tiêu thụ trong 10 phút (600s) là 2880 J.", ans: true }
-                    ],
-                    hint: "$P = U \\cdot I = 12 \\cdot 0,4 = 4,8$ W; $A = P \\cdot t = 4,8 \\cdot 600 = 2880$ J.",
-                    rationale: "Tất cả 4 ý a, b, c, d đều đúng chuẩn xác."
-                },
-                { type: 'short', q: "Câu 19. Kính lúp có số phóng đại 5x. Tiêu cự f của kính lúp bằng bao nhiêu cm (biết $G = 25/f$)?", correct: "5", hint: "$f = 25 / 5 = 5$ cm.", rationale: "Tiêu cự $f = 25 / 5 = 5$ cm." },
-                { type: 'short', q: "Câu 20. Chiếu tia sáng từ không khí vào thủy tinh chiết suất $n = \\sqrt{2}$ với góc tới $i = 45^{\\circ}$. Tính góc khúc xạ r theo độ (chỉ điền số).", correct: "30", hint: "$\\sin r = \\sin 45^{\\circ} / \\sqrt{2} = 1/2 \\Rightarrow r = 30^{\\circ}$.", rationale: "Góc khúc xạ $r = 30^{\\circ}$." },
-                { type: 'short', q: "Câu 21. Bóng đèn 220V - 100W dùng 5 giờ mỗi ngày. Điện năng tiêu thụ trong 30 ngày là bao nhiêu kWh (chỉ điền số)?", correct: "15", hint: "$A = 0,1 \\text{ kW} \\times 5 \\text{ h} \\times 30 = 15$ kWh.", rationale: "Điện năng tiêu thụ là 15 kWh." },
-                { type: 'short', q: "Câu 22. Trong 1 giây, dòng điện xoay chiều đổi chiều 100 lần. Tần số f của dòng điện là bao nhiêu Hz (chỉ điền số)?", correct: "50", hint: "$f = 100 / 2 = 50$ Hz.", rationale: "Tần số $f = 50$ Hz." }
-            ]
-        };
+    <form id="quiz-form">
+        <div id="quiz-container"></div>
+        <button type="button" class="btn-submit" onclick="submitQuiz()">Nộp Bài & Chấm Điểm Tổng Kết</button>
+    </form>
+</div>
 
-        const dbGDCD = {
-            1: [
-                { type: 'mc', q: "Câu 1. Nội dung nào sau đây phản ánh đúng khái niệm sống có lí tưởng?", opts: ["Sống có mục tiêu rõ ràng để đạt được lợi ích cho bản thân.", "Sống có mục đích cao đẹp, nỗ lực phấn đấu để đạt được mục đích đó.", "Sống có ước mơ lớn lao và mong muốn được mọi người công nhận.", "Sống có kế hoạch cụ thể nhằm đạt được thành công trong tương lai."], correct: 1, hint: "Mục đích cao đẹp và nỗ lực phấn đấu.", rationale: "Sống có lí tưởng là sống có mục đích cao đẹp, nỗ lực phấn đấu để đạt được mục đích đó." },
-                { type: 'mc', q: "Câu 2. Biểu hiện nào sau đây thể hiện lí tưởng sống cao đẹp của thanh niên Việt Nam hiện nay?", opts: ["Tích cực học tập, rèn luyện để góp phần xây dựng và bảo vệ Tổ quốc.", "Nỗ lực học tập, rèn luyện để có cuộc sống giàu sang và nổi tiếng.", "Cố gắng học tập, phấn đấu để đạt được địa vị cao trong xã hội.", "Chăm chỉ học tập, rèn luyện để có công việc ổn định và thu nhập cao."], correct: 0, hint: "Xây dựng và bảo vệ Tổ quốc.", rationale: "Tích cực học tập, rèn luyện để góp phần xây dựng và bảo vệ Tổ quốc." },
-                { type: 'mc', q: "Câu 3. Sống có lí tưởng cao đẹp mang lại ý nghĩa gì đối với mỗi người?", opts: ["Giúp con người đạt được thành công và có địa vị cao trong xã hội.", "Giúp con người có động lực phấn đấu, hoàn thiện bản thân và cống hiến cho xã hội.", "Giúp con người thực hiện được mọi ước mơ và nhận được sự kính trọng.", "Giúp con người vượt qua mọi khó khăn và đạt được thành tích xuất sắc."], correct: 1, hint: "Tạo động lực và cống hiến.", rationale: "Giúp con người có động lực phấn đấu, hoàn thiện bản thân và cống hiến cho xã hội." },
-                { type: 'mc', q: "Câu 4. Biểu hiện nào sau đây thể hiện lòng khoan dung trong cuộc sống?", opts: ["Tôn trọng và cảm thông với những thiếu sót của người khác.", "Bỏ qua mọi lỗi lầm của người khác để giữ gìn tình cảm.", "Chấp nhận mọi hành vi của người khác để tránh mâu thuẫn.", "Không góp ý khi người khác mắc lỗi để giữ gìn hòa khí."], correct: 0, hint: "Tôn trọng và cảm thông thiếu sót.", rationale: "Tôn trọng và cảm thông với những thiếu sót của người khác." },
-                { type: 'mc', q: "Câu 5. Người có lòng khoan dung thường có thái độ nào sau đây đối với người mắc lỗi?", opts: ["Sẵn sàng tha thứ mà không cần quan tâm đến việc sửa lỗi.", "Biết cảm thông, tha thứ và tạo cơ hội để họ sửa chữa lỗi lầm.", "Luôn giữ khoảng cách để người mắc lỗi tự nhận ra sai lầm.", "Chấp nhận mọi lời xin lỗi dù người mắc lỗi không thay đổi."], correct: 1, hint: "Cảm thông, tha thứ và tạo cơ hội sửa sai.", rationale: "Biết cảm thông, tha thứ và tạo cơ hội để họ sửa chữa lỗi lầm." },
-                { type: 'mc', q: "Câu 6. Hành vi nào sau đây thể hiện sự thiếu khoan dung trong cuộc sống?", opts: ["Lắng nghe và tôn trọng những ý kiến khác biệt của người khác.", "Cảm thông và chia sẻ với những khó khăn của người xung quanh.", "Chỉ trích và cố tình xa lánh người khác khi họ mắc lỗi lầm.", "Tha thứ và tạo cơ hội cho người mắc lỗi sửa chữa sai lầm."], correct: 2, hint: "Chỉ trích và xa lánh.", rationale: "Chỉ trích và cố tình xa lánh người khác khi họ mắc lỗi lầm là thiếu khoan dung." },
-                { type: 'mc', q: "Câu 7. Lòng khoan dung có ý nghĩa như thế nào trong việc xây dựng các mối quan hệ giữa con người với con người?", opts: ["Giúp mọi người tránh được bất đồng và không còn xảy ra mâu thuẫn trong cuộc sống.", "Giúp mọi người dễ dàng tha thứ mà không cần quan tâm đến lỗi lầm của người khác.", "Giúp mọi người duy trì các mối quan hệ mà không cần thay đổi cách ứng xử của mình.", "Giúp mọi người thấu hiểu, tôn trọng lẫn nhau và xây dựng các mối quan hệ tốt đẹp."], correct: 3, hint: "Thấu hiểu, tôn trọng và quan hệ tốt đẹp.", rationale: "Giúp mọi người thấu hiểu, tôn trọng lẫn nhau và xây dựng các mối quan hệ tốt đẹp." },
-                { type: 'mc', q: "Câu 8. Lớp 9A tổ chức quyên góp sách vở giúp học sinh khó khăn. Bạn M không muốn tham gia vì không có lợi ích cá nhân, em sẽ làm gì?", opts: ["Tôn trọng quyết định của M vì tham gia hoạt động cộng đồng là quyền tự do.", "Giải thích ý nghĩa của hoạt động và vận động M tham gia bằng việc làm phù hợp.", "Đề nghị giáo viên yêu cầu M tham gia để bảo đảm phong trào.", "Khuyên M đóng góp một khoản tiền để hoàn thành trách nhiệm."], correct: 1, hint: "Giải thích ý nghĩa và vận động tham gia.", rationale: "Giải thích ý nghĩa của hoạt động và vận động M tham gia bằng việc làm phù hợp." },
-                { type: 'mc', q: "Câu 9. Hoạt động cộng đồng được hiểu chính xác là:", opts: ["Mọi hoạt động do cá nhân tự thực hiện để phát triển bản thân.", "Những hoạt động có tổ chức, hướng tới phục vụ lợi ích chung của tập thể, cộng đồng xã hội.", "Những hoạt động vui chơi, giải trí nhằm giảm căng thẳng sau giờ học.", "Mọi hoạt động diễn ra trong khu dân cư, không phân biệt mục đích."], correct: 1, hint: "Hướng tới lợi ích chung tập thể.", rationale: "Những hoạt động có tổ chức, hướng tới phục vụ lợi ích chung của tập thể, cộng đồng xã hội." },
-                { type: 'mc', q: "Câu 10. Hoạt động nào sau đây được xác định là hoạt động cộng đồng?", opts: ["Tham gia câu lạc bộ thể thao nâng cao sức khỏe cá nhân.", "Tham gia lớp học ngoại ngữ phát triển giao tiếp cá nhân.", "Tham gia nhóm tình nguyện hỗ trợ người dân khắc phục hậu quả thiên tai.", "Tham gia cuộc thi năng khiếu phát huy sở trường."], correct: 2, hint: "Tình nguyện hỗ trợ thiên tai.", rationale: "Tham gia nhóm tình nguyện hỗ trợ người dân khắc phục hậu quả thiên tai." },
-                { type: 'mc', q: "Câu 11. Địa phương tổ chức 'Ngày Chủ nhật xanh', một số bạn cho rằng dọn vệ sinh là việc của công nhân. Em chọn cách ứng xử nào?", opts: ["Giải thích ý nghĩa hoạt động, phân công công việc và yêu cầu tham gia.", "Tuyên truyền trách nhiệm bảo vệ môi trường, vận động và cùng các bạn thực hiện.", "Đề nghị giáo viên nhắc nhở, yêu cầu thực hiện trách nhiệm.", "Tôn trọng ý kiến, tự giác tham gia và báo cáo kết quả."], correct: 1, hint: "Tuyên truyền vận động cùng làm.", rationale: "Tuyên truyền trách nhiệm bảo vệ môi trường, vận động và cùng các bạn thực hiện." },
-                { type: 'mc', q: "Câu 12. Biểu hiện nào sau đây thể hiện thái độ khách quan khi đánh giá người khác?", opts: ["Đánh giá dựa trên ấn tượng lần gặp đầu tiên.", "Đánh giá dựa trên nhận xét của người thân thiết.", "Đánh giá dựa trên tình cảm và mức độ gần gũi.", "Đánh giá người khác dựa trên sự thật và những thông tin đã được kiểm chứng."], correct: 3, hint: "Dựa trên sự thật và kiểm chứng.", rationale: "Đánh giá người khác dựa trên sự thật và những thông tin đã được kiểm chứng." },
-                { 
-                    type: 'tf', 
-                    q: "Câu 13. Vận động viên Nguyễn Thị Oanh giành 4 HCV SEA Games 32:", 
-                    sub: [
-                        { text: "Khát vọng mang vinh quang về cho Tổ quốc là biểu hiện lí tưởng sống cao đẹp.", ans: true },
-                        { text: "Thành tích của Oanh cho thấy sống có lí tưởng giúp con người có động lực phấn đấu và vượt khó.", ans: true },
-                        { text: "Lí tưởng sống cao đẹp của Oanh chỉ thể hiện ở mong muốn giành thành tích cá nhân, không gắn với cống hiến cho đất nước.", ans: false },
-                        { text: "Từ tấm gương Nguyễn Thị Oanh, học sinh cần xác định mục tiêu học tập phù hợp, kiên trì rèn luyện.", ans: true }
-                    ],
-                    hint: "Ý c nhận định sai về lí tưởng cống hiến.",
-                    rationale: "a, b, d Đúng. c Sai vì lí tưởng của Oanh gắn liền với sự cống hiến cho đất nước."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 14. Minh thuyết trình nhóm sai sót, bạn bè trách móc. Lan khuyên thông cảm và tạo cơ hội cho Minh sửa sai:", 
-                    sub: [
-                        { text: "Việc Lan khuyên thông cảm và tạo cơ hội cho Minh sửa sai là biểu hiện của lòng khoan dung.", ans: true },
-                        { text: "Thái độ trách móc, không muốn Minh tham gia khiến Minh mặc cảm, ảnh hưởng đoàn kết.", ans: true },
-                        { text: "Khi Minh nhận lỗi, nhóm cần bỏ qua mọi thiếu sót và không cần góp ý để tránh làm tổn thương.", ans: false },
-                        { text: "Em nên chấp nhận lời xin lỗi, cùng Minh khắc phục sai sót và động viên lần sau.", ans: true }
-                    ],
-                    hint: "Ý c sai vì tha thứ vẫn cần góp ý chân thành.",
-                    rationale: "a, b, d Đúng. c Sai vì vẫn cần góp ý chân thành để bạn tiến bộ."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 15. Chương trình 'Tiếp sức mùa thi' năm 2024 hỗ trợ gần 900.000 suất ăn, 3 triệu chai nước, đưa đón miễn phí:", 
-                    sub: [
-                        { text: "Hoạt động hỗ trợ suất ăn, nước uống, đưa đón miễn phí là những hoạt động cộng đồng.", ans: true },
-                        { text: "Chương trình góp phần chia sẻ khó khăn, thể hiện tinh thần trách nhiệm thanh niên.", ans: true },
-                        { text: "Việc tham gia chỉ mang lại lợi ích cho thí sinh, không góp phần rèn luyện kỹ năng sống.", ans: false },
-                        { text: "Học sinh lớp 9 nên chủ động đăng ký công việc phù hợp, vận động bạn bè cùng tham gia.", ans: true }
-                    ],
-                    hint: "Ý c sai vì tham gia hoạt động cộng đồng giúp phát triển kỹ năng sống.",
-                    rationale: "a, b, d Đúng. c Sai vì hoạt động cộng đồng giúp tình nguyện viên rèn luyện kỹ năng."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 16. Quan điểm của Napoleon Hill về sự thật, công bằng trong giao dịch:", 
-                    sub: [
-                        { text: "Việc quan tâm tới lợi ích chính đáng của tất cả các bên trong giao dịch là biểu hiện của công bằng.", ans: true },
-                        { text: "Napoleon Hill cho rằng chỉ người giàu sang, địa vị mới cần công bằng; người bình thường bỏ qua.", ans: false },
-                        { text: "Sự giàu sang và địa vị chỉ tồn tại bền vững khi được xây dựng trên sự thật và công bằng.", ans: true },
-                        { text: "Khi đánh giá kết quả nhóm, dù bạn thân chưa tốt, em vẫn cần nhận xét trung thực, công bằng.", ans: true }
-                    ],
-                    hint: "Ý b sai vì công bằng áp dụng cho tất cả mọi người.",
-                    rationale: "a, c, d Đúng. b Sai."
-                }
-            ],
-            2: [
-                { type: 'mc', q: "Câu 1. Điền vào chỗ chấm: 'Lí tưởng là mục đích ... mà con người mong muốn đạt tới.'", opts: ["quan trọng", "cao đẹp nhất", "đẹp đẽ", "mãnh liệt"], correct: 1, hint: "Mục đích cao đẹp nhất.", rationale: "Lí tưởng là mục đích cao đẹp nhất mà con người mong muốn đạt tới." },
-                { type: 'mc', q: "Câu 2. Biểu hiện nào cho thấy người chưa có lí tưởng sống?", opts: ["Biết xác định mục tiêu học tập, phấn đấu tương lai.", "Cố gắng học tập, rèn luyện để cống hiến.", "Sống buông thả, không quan tâm đến kết quả học tập.", "Kiên trì, vượt khó khăn đạt mục tiêu."], correct: 2, hint: "Sống buông thả.", rationale: "Sống buông thả, không quan tâm đến kết quả học tập thể hiện chưa có lí tưởng sống." },
-                { type: 'mc', q: "Câu 3. Ý nào đúng khi nói về ý nghĩa của người sống có lí tưởng?", opts: ["Người có lí tưởng sống cao đẹp sẽ giàu có về tâm hồn.", "Người có lí tưởng sống cao đẹp luôn được mọi người tôn trọng.", "Người có lí tưởng sống cao đẹp luôn có nhiều bạn.", "Người có lí tưởng sống cao đẹp sẽ trở nên giàu có."], correct: 1, hint: "Luôn được mọi người tôn trọng.", rationale: "Người có lí tưởng sống cao đẹp luôn được mọi người tôn trọng." },
-                { type: 'mc', q: "Câu 4. Biểu hiện nào sau đây thể hiện lòng khoan dung?", opts: ["Bỏ qua mọi hành vi sai trái.", "Đồng tình với mọi ý kiến tránh bất đồng.", "Cảm thông và tạo cơ hội để người mắc lỗi sửa chữa.", "Không góp ý với người mắc lỗi giữ hòa khí."], correct: 2, hint: "Cảm thông và tạo cơ hội sửa chữa.", rationale: "Cảm thông và tạo cơ hội để người mắc lỗi sửa chữa." },
-                { type: 'mc', q: "Câu 5. Hành động nào KHÔNG thể hiện lòng khoan dung?", opts: ["Tha thứ cho lỗi lầm.", "Cảm thông với khó khăn.", "Lắng nghe tôn trọng ý kiến khác biệt.", "Cố tình trả đũa người đã xúc phạm mình."], correct: 3, hint: "Trả đũa người khác.", rationale: "Cố tình trả đũa người đã xúc phạm mình là hành vi thiếu khoan dung." },
-                { type: 'mc', q: "Câu 6. Lòng khoan dung thể hiện ở hành vi nào sau đây?", opts: ["Tha thứ khi bạn làm sai và khuyên bạn sửa lỗi.", "Tránh xa bạn khi bạn mắc lỗi.", "Nói xấu bạn khi bạn có khuyết điểm.", "Phạt bạn thật nặng để răn đe."], correct: 0, hint: "Tha thứ và khuyên sửa lỗi.", rationale: "Tha thứ khi bạn làm sai và khuyên bạn sửa lỗi." },
-                { type: 'mc', q: "Câu 7. Trong các mối quan hệ, lòng khoan dung có ý nghĩa:", opts: ["Giúp mọi người thấu hiểu, tôn trọng và xây dựng quan hệ tốt đẹp.", "Giúp mọi người không bao giờ bất đồng.", "Khiến mỗi người chấp nhận mọi lỗi lầm.", "Khiến các bên không cần góp ý."], correct: 0, hint: "Thấu hiểu và quan hệ tốt đẹp.", rationale: "Giúp mọi người thấu hiểu, tôn trọng và xây dựng quan hệ tốt đẹp." },
-                { type: 'mc', q: "Câu 8. Quân bị nhóm học sinh đe dọa, xô đẩy trên đường về. Nếu là lớp trưởng, em sẽ làm gì?", opts: ["Đến can ngăn một mình và yêu cầu xin lỗi.", "Gọi người lớn hoặc giáo viên hỗ trợ, bảo đảm an toàn.", "Đề nghị Quân bỏ qua vì chỉ đùa.", "Tự tìm gặp nhóm học sinh giải quyết riêng."], correct: 1, hint: "Báo người lớn/giáo viên đảm bảo an toàn.", rationale: "Gọi người lớn hoặc giáo viên hỗ trợ, bảo đảm an toàn cho Quân." },
-                { type: 'mc', q: "Câu 9. Hoạt động cộng đồng được hiểu chính xác là:", opts: ["Mọi hoạt động cá nhân tự thực hiện.", "Những hoạt động có tổ chức, hướng tới phục vụ lợi ích chung của tập thể, cộng đồng xã hội.", "Những hoạt động vui chơi giải trí.", "Mọi hoạt động diễn ra trong khu dân cư."], correct: 1, hint: "Phục vụ lợi ích chung cộng đồng.", rationale: "Những hoạt động có tổ chức, hướng tới phục vụ lợi ích chung của tập thể, cộng đồng xã hội." },
-                { type: 'mc', q: "Câu 10. Nhận định nào đúng về vai trò học sinh trong hoạt động cộng đồng?", opts: ["Chỉ tham gia khi có yêu cầu từ nhà trường.", "Vai trò rất hạn chế vì còn nhỏ tuổi.", "Có thể là người thực hiện, tham gia hoặc tuyên truyền cho hoạt động cộng đồng.", "Tham gia nhưng không cần hiểu rõ ý nghĩa."], correct: 2, hint: "Thực hiện, tham gia, tuyên truyền.", rationale: "Học sinh có thể là người thực hiện, tham gia hoặc tuyên truyền cho các hoạt động cộng đồng." },
-                { type: 'mc', q: "Câu 11. Địa phương tổ chức 'Ngày Chủ nhật xanh', bạn cho rằng vệ sinh đường phố là việc của công nhân. Em chọn cách nào để vận động?", opts: ["Yêu cầu bắt buộc tham gia.", "Giải thích lợi ích chung, rủ các bạn chọn việc phù hợp và cùng thực hiện.", "Chỉ tham gia một mình.", "Đề nghị góp tiền thuê người làm thay."], correct: 1, hint: "Giải thích lợi ích chung và cùng làm.", rationale: "Giải thích lợi ích chung, rủ các bạn chọn việc phù hợp và cùng thực hiện." },
-                { type: 'mc', q: "Câu 12. Biểu hiện nào là khách quan?", opts: ["Nhìn nhận sự việc theo chiều hướng thiên vị.", "Nhìn nhận sự vật phiến diện.", "Nhìn nhận sự vật một cách chính xác, đúng sự thật.", "Nhìn nhận hiện tượng định kiến."], correct: 2, hint: "Chính xác, đúng sự thật.", rationale: "Nhìn nhận sự vật một cách chính xác, đúng bản chất." },
-                { 
-                    type: 'tf', 
-                    q: "Câu 13. Tấm gương bác sĩ trẻ Đặng Minh Hiệu cạo trọc đầu đi vào tuyến lửa chống dịch Covid-19:", 
-                    sub: [
-                        { text: "Việc làm của bác sĩ Đặng Minh Hiệu thể hiện sự nông nổi, thích thể hiện bản thân.", ans: false },
-                        { text: "Sẵn sàng đến vùng dịch, chuẩn bị chu đáo cho thấy lí tưởng sống gắn với trách nhiệm và cống hiến.", ans: true },
-                        { text: "Học sinh, thanh niên cần làm những việc mình thích, việc mạo hiểm để thực hiện mục đích.", ans: false },
-                        { text: "Đây là tấm gương ý chí, tinh thần xung kích đóng góp cho lợi ích cộng đồng, quốc gia.", ans: true }
-                    ],
-                    hint: "Ý a và c sai bản chất việc cống hiến.",
-                    rationale: "b, d Đúng. a, c Sai."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 14. Gia đình bà A không tuân thủ quy định khu phố, sau khi hàng xóm lạnh nhạt đã xin lỗi và hứa sửa đổi:", 
-                    sub: [
-                        { text: "Gia đình bà A cư xử thiếu tôn trọng với tập thể trong khu phố.", ans: true },
-                        { text: "Hành động của tổ trưởng dân phố là sai vì can thiệp chuyện riêng.", ans: false },
-                        { text: "Bà A nhận ra lỗi lầm, xin lỗi cho thấy bà là người biết tự điều chỉnh hành vi.", ans: true },
-                        { text: "Nếu là hàng xóm, em nên ghi nhận lời xin lỗi, khuyến khích sửa sai, không bao che tái phạm.", ans: true }
-                    ],
-                    hint: "Ý b sai vì tổ trưởng nhắc nhở đúng trách nhiệm.",
-                    rationale: "a, c, d Đúng. b Sai."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 15. Báo cáo Hội LHTN Việt Nam 2023 về thanh niên tham gia hoạt động cộng đồng:", 
-                    sub: [
-                        { text: "Một bộ phận thanh niên không tham gia hoạt động vì cho rằng không thiết thực với bản thân.", ans: true },
-                        { text: "Các hoạt động như 'Ngày Chủ nhật xanh' không đóng góp nâng cao ý thức bảo vệ môi trường.", ans: false },
-                        { text: "Tham gia hoạt động cộng đồng chỉ giúp nâng cao trách nhiệm xã hội, không ảnh hưởng kỹ năng sống.", ans: false },
-                        { text: "Tham gia hoạt động cộng đồng giúp thanh niên mở rộng mối quan hệ xã hội, mạng lưới nghề nghiệp.", ans: true }
-                    ],
-                    hint: "Ý b và c sai vì hoạt động cộng đồng nâng cao ý thức và kỹ năng.",
-                    rationale: "a, d Đúng. b, c Sai."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 16. Quan điểm của Napoleon Hill về sự thật và công bằng:", 
-                    sub: [
-                        { text: "Qua câu nói, em thấy Napoleon Hill đề cao vai trò của công bằng trong cuộc sống.", ans: true },
-                        { text: "Napoleon Hill cho rằng chỉ người giàu sang, địa vị mới cần công bằng; người bình thường bỏ qua.", ans: false },
-                        { text: "Để xã hội trường tồn và phát triển, mọi người cùng chung sống hòa bình, hãy đối xử công bằng.", ans: true },
-                        { text: "Khi đánh giá kết quả làm việc nhóm, cần căn cứ mức độ đóng góp thực tế, không thiên vị bạn thân.", ans: true }
-                    ],
-                    hint: "Ý b sai.",
-                    rationale: "a, c, d Đúng. b Sai."
-                }
-            ],
-            3: [
-                { type: 'mc', q: "Câu 1. Sống có lí tưởng là:", opts: ["chỉ quan tâm đến lợi ích cá nhân.", "xác định được mục đích sống cao đẹp và nỗ lực phấn đấu để đạt được mục đích đó.", "sống theo trào lưu, chạy theo sở thích người khác.", "chấp nhận thực tại, không cần vươn lên."], correct: 1, hint: "Mục đích cao đẹp và nỗ lực phấn đấu.", rationale: "Xác định được mục đích sống cao đẹp và nỗ lực phấn đấu để đạt được mục đích đó." },
-                { type: 'mc', q: "Câu 2. Lí tưởng sống cao đẹp của thanh niên Việt Nam hiện nay là:", opts: ["phấn đấu vì độc lập dân tộc và CNXH, vì dân giàu, nước mạnh, dân chủ, công bằng, văn minh.", "nỗ lực làm giàu cho bản thân bằng mọi giá.", "tìm kiếm cuộc sống an nhàn, tránh xa hoạt động xã hội.", "ưu tiên chạy theo các xu hướng thời thượng."], correct: 0, hint: "Dân giàu, nước mạnh, dân chủ, công bằng, văn minh.", rationale: "Phấn đấu vì độc lập dân tộc và CNXH, vì mục tiêu dân giàu, nước mạnh, dân chủ, công bằng, văn minh." },
-                { type: 'mc', q: "Câu 3. Ý nghĩa việc sống có lí tưởng đối với mỗi cá nhân:", opts: ["Giúp cá nhân vượt qua khó khăn, hoàn thiện bản thân và đóng góp cho xã hội.", "Đảm bảo chắc chắn trở nên giàu có, quyền lực.", "Giúp cá nhân không bao giờ gặp thất bại.", "Giúp cá nhân nổi tiếng trên mạng xã hội."], correct: 0, hint: "Vượt khó khăn, hoàn thiện bản thân, đóng góp xã hội.", rationale: "Giúp cá nhân vượt qua mọi khó khăn, hướng tới hoàn thiện bản thân và đóng góp cho xã hội." },
-                { type: 'mc', q: "Câu 4. Tôn trọng, rộng lượng, tha thứ cho người khác khi họ nhận ra lỗi lầm và biết sửa chữa là biểu hiện của:", opts: ["tính khiêm tốn.", "lòng khoan dung.", "tính trung thực.", "sự cẩn trọng."], correct: 1, hint: "Khoan dung.", rationale: "Đó là biểu hiện của lòng khoan dung." },
-                { type: 'mc', q: "Câu 5. Hành vi nào là biểu hiện của lòng khoan dung trong quan hệ giữa người với người?", opts: ["Cố tình nhắc lại sai lầm cũ trước mặt người khác.", "Bỏ qua mọi hành vi vi phạm pháp luật nghiêm trọng.", "Giữ thái độ định kiến, hận thù người từng làm tổn thương.", "Sẵn sàng lắng nghe, cảm thông và tha thứ khi bạn chân thành xin lỗi."], correct: 3, hint: "Lắng nghe, cảm thông, tha thứ khi xin lỗi.", rationale: "Sẵn sàng lắng nghe, cảm thông và tha thứ khi bạn chân thành xin lỗi." },
-                { type: 'mc', q: "Câu 6. Người có lòng khoan dung là người:", opts: ["luôn sống vị kỷ, đặt quyền lợi bản thân lên trên hết.", "thỏa hiệp và bao che cho mọi lỗi lầm, vi phạm pháp luật.", "biết lắng nghe, tôn trọng sự khác biệt, không cố chấp, hẹp hòi, định kiến.", "luôn áp đặt ý kiến cá nhân lên người khác."], correct: 2, hint: "Lắng nghe, tôn trọng sự khác biệt, không cố chấp.", rationale: "Biết lắng nghe, tôn trọng sự khác biệt của người khác, không cố chấp, hẹp hòi, định kiến." },
-                { type: 'mc', q: "Câu 7. Giá trị to lớn của lòng khoan dung đối với các mối quan hệ xã hội là gì?", opts: ["Giải quyết tận gốc mọi xung đột kinh tế.", "Giúp mối quan hệ giữa người với người tốt đẹp hơn.", "Giúp cá nhân nhận được nhiều quà tặng.", "Loại bỏ hoàn toàn cạnh tranh."], correct: 1, hint: "Mối quan hệ tốt đẹp hơn.", rationale: "Giúp mối quan hệ giữa người với người sẽ tốt đẹp hơn." },
-                { type: 'mc', q: "Câu 8. Trong thảo luận nhóm, bạn A đưa ra ý kiến trái ngược nhưng đúng thực tế, em nên ứng xử thế nào để thể hiện khoan dung?", opts: ["Bình tĩnh lắng nghe, tôn trọng ý kiến khác biệt và tiếp thu nếu đúng.", "Bỏ ra về và không tham gia thảo luận nữa.", "Cắt ngang lời bạn và chỉ trích trước nhóm.", "Tuyên bố chấm dứt quan hệ bạn bè."], correct: 0, hint: "Bình tĩnh lắng nghe, tôn trọng tiếp thu.", rationale: "Bình tĩnh lắng nghe, tôn trọng ý kiến khác biệt của bạn và tiếp thu nếu ý kiến đó đúng." },
-                { type: 'mc', q: "Câu 9. Hoạt động cộng đồng là các hoạt động:", opts: ["do cá nhân thực hiện phục vụ kinh doanh gia đình.", "mang tính riêng tư, kín đáo.", "bắt buộc đối với tất cả người lao động hưởng lương.", "do cá nhân hoặc tổ chức thực hiện vì lợi ích chung của cộng đồng và xã hội."], correct: 3, hint: "Vì lợi ích chung cộng đồng, xã hội.", rationale: "Do cá nhân hoặc tổ chức thực hiện vì lợi ích chung của cộng đồng và xã hội." },
-                { type: 'mc', q: "Câu 10. Hoạt động nào KHÔNG phải là hoạt động cộng đồng?", opts: ["Tham gia chiến dịch dọn vệ sinh đường phố, ngõ xóm.", "Quyên góp ủng hộ đồng bào lũ lụt, thiên tai.", "Chơi game giải trí cá nhân tại nhà vào giờ rảnh rỗi.", "Tham gia chương trình 'Tiếp sức mùa thi' hỗ trợ thí sinh."], correct: 2, hint: "Chơi game cá nhân tại nhà.", rationale: "Chơi game giải trí cá nhân tại nhà không phải hoạt động cộng đồng." },
-                { type: 'mc', q: "Câu 11. Khi trường tổ chức 'Ngày Chủ nhật xanh', học sinh nên lựa chọn thái độ và hành động nào?", opts: ["Tự giác, tích cực tham gia công việc được phân công và kêu gọi bạn bè cùng làm.", "Viện lý do bận việc gia đình để trốn tránh.", "Đến điểm danh cho có mặt rồi bỏ đi chơi game.", "Đứng nhìn các bạn làm và chê bai."], correct: 0, hint: "Tự giác tích cực tham gia.", rationale: "Tự giác, tích cực tham gia các công việc được phân công và kêu gọi bạn bè cùng làm." },
-                { type: 'mc', q: "Câu 12. Nhìn nhận, đánh giá sự vật, sự việc một cách trung thực, đúng bản chất, không định kiến, thiên vị là:", opts: ["tính khách quan.", "tính chủ quan.", "tính bảo thủ.", "sự tự tin."], correct: 0, hint: "Tính khách quan.", rationale: "Đó là biểu hiện của tính khách quan." },
-                { 
-                    type: 'tf', 
-                    q: "Câu 13. Nam mơ ước làm bác sĩ chữa bệnh cho người nghèo, tích cực học tập và làm từ thiện:", 
-                    sub: [
-                        { text: "Ước mơ trở thành bác sĩ chữa bệnh cho người nghèo của Nam là biểu hiện của lí tưởng sống cao đẹp.", ans: true },
-                        { text: "Lập trường cho rằng học sinh lớp 9 chỉ cần thi đỗ cấp 3, không cần mơ ước xa xôi là nhận thức đúng.", ans: false },
-                        { text: "Việc Nam vừa nỗ lực học tập vừa tham gia thiện nguyện giúp rèn luyện toàn diện kỹ năng.", ans: true },
-                        { text: "Học sinh lớp 9 hiện nay chỉ cần học thật giỏi các môn, không cần tham gia hoạt động xã hội.", ans: false }
-                    ],
-                    hint: "Ý b và d sai vì cần có ước mơ và tham gia hoạt động xã hội.",
-                    rationale: "a, c Đúng. b, d Sai."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 14. Minh vô tình làm rớt mực vào bài Hoa, Hoa bực mình nhưng sau khi Minh xin lỗi đã mỉm cười bỏ qua:", 
-                    sub: [
-                        { text: "Việc Hoa mỉm cười và bỏ qua cho Minh là biểu hiện cụ thể của lòng khoan dung học đường.", ans: true },
-                        { text: "Sự bao dung của Hoa giúp duy trì, thắt chặt tình bạn, tránh xung đột không đáng có.", ans: true },
-                        { text: "Lòng khoan dung đòi hỏi phải tha thứ tất cả hành vi, kể cả vi phạm pháp luật nghiêm trọng nhiều lần.", ans: false },
-                        { text: "Để thực hiện lòng khoan dung, cần biết kiềm chế cảm xúc tiêu cực, lắng nghe, đặt mình vào vị trí người khác.", ans: true }
-                    ],
-                    hint: "Ý c sai vì khoan dung không bao che vi phạm pháp luật.",
-                    rationale: "a, b, d Đúng. c Sai."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 15. Phong trào 'Nuôi heo đất - Trao tình thương' tại Trường THCS Kiến Thụy:", 
-                    sub: [
-                        { text: "Phong trào 'Nuôi heo đất - Trao tình thương' là hoạt động cộng đồng nhân văn sâu sắc.", ans: true },
-                        { text: "Vận động bạn bè cùng tham gia thiện nguyện là trách nhiệm và thể hiện sự tích cực của học sinh.", ans: true },
-                        { text: "Suy nghĩ của Hùng cho rằng học sinh không có tiền không cần quan tâm thể hiện thái độ thờ ơ.", ans: true },
-                        { text: "Học sinh THCS chưa tự làm ra tiền nên tuyệt đối không tham gia hoạt động quyên góp.", ans: false }
-                    ],
-                    hint: "Ý d sai vì học sinh có thể đóng góp bằng sức lao động hoặc tiết kiệm nhỏ tuổi.",
-                    rationale: "a, b, c Đúng. d Sai."
-                },
-                { 
-                    type: 'tf', 
-                    q: "Câu 16. Lớp trưởng Tuấn thẳng thắn chỉ ra lỗi của bạn thân Dũng và tuyên dương Mai dù từng có bất đồng:", 
-                    sub: [
-                        { text: "Hành vi của bạn Tuấn thể hiện sự khách quan, công bằng, không vị nể bạn thân.", ans: true },
-                        { text: "Nhận xét đúng sự thật, không thiên vị trong công việc chung là biểu hiện của người sống công bằng.", ans: true },
-                        { text: "Việc Tuấn xử lí công minh đối với bạn thân sẽ làm mất uy tín Lớp trưởng.", ans: false },
-                        { text: "Thái độ đánh giá công minh, trung thực góp phần xây dựng tập thể lớp đoàn kết, minh bạch.", ans: true }
-                    ],
-                    hint: "Ý c sai vì xử lý công minh sẽ tăng uy tín lớp trưởng.",
-                    rationale: "a, b, d Đúng. c Sai."
-                }
-            ]
-        };
+<script>
+// DỮ LIỆU ĐƯỢC PHÂN TÁCH ĐẦY ĐỦ CHO TỪNG PHẦN
+const dataStore = {
+    cn1: [
+        { q: "Thiết bị đóng cắt nào sau đây thường được sử dụng trong mạng điện gia đình?", options: ["A. Cầu chì.", "B. Công tắc điện.", "C. Ổ cắm điện.", "D. Phích cắm điện."], ans: "B" },
+        { q: "Chức năng chính của ổ cắm điện là gì?", options: ["A. Đóng, ngắt mạch điện.", "B. Bảo vệ mạch điện khi quá tải.", "C. Lấy điện cung cấp cho các thiết bị điện.", "D. Đo điện năng tiêu thụ."], ans: "C" },
+        { q: "Thông số kĩ thuật nào quan trọng nhất khi chọn công tắc điện?", options: ["A. Màu sắc vỏ.", "B. Kích thước.", "C. Điện áp và cường độ dòng điện định mức.", "D. Nhà sản xuất."], ans: "C" },
+        { q: "Dụng cụ nào dùng để đo điện áp của mạch điện?", options: ["A. Ampe kế.", "B. Vôn kế.", "C. Công tơ điện.", "D. Thước cuộn."], ans: "B" },
+        { q: "Khi sử dụng ampe kế để đo cường độ dòng điện, cần mắc ampe kế như thế nào?", options: ["A. Song song với mạch điện.", "B. Nối tiếp với thiết bị cần đo.", "C. Mắc vào bất kỳ vị trí nào.", "D. Song song với nguồn điện."], ans: "B" },
+        { q: "Sự cần thiết của việc sử dụng dụng cụ đo điện là gì?", options: ["A. Để trang trí bảng điện.", "B. Để kiểm tra các thông số kỹ thuật của mạch điện.", "C. Để tăng công suất mạch điện.", "D. Để tiết kiệm điện."], ans: "B" },
+        { q: "Sơ đồ nguyên lí của mạng điện trong nhà thể hiện điều gì?", options: ["A. Vị trí lắp đặt các thiết bị.", "B. Cách đi dây dẫn.", "C. Các mối liên hệ điện giữa các phần tử.", "D. Kích thước lắp đặt."], ans: "C" },
+        { q: "Trong sơ đồ lắp đặt, các phần tử được thể hiện như thế nào?", options: ["A. Chỉ bằng kí hiệu quy ước.", "B. Bằng hình dạng thực tế hoặc kí hiệu vị trí lắp đặt.", "C. Không cần thể hiện.", "D. Chỉ thể hiện dây dẫn."], ans: "B" },
+        { q: "Điểm khác biệt cơ bản giữa sơ đồ nguyên lí và sơ đồ lắp đặt là gì?", options: ["A. Sơ đồ lắp đặt không thể hiện dây dẫn.", "B. Sơ đồ nguyên lí không thể hiện chức năng.", "C. Sơ đồ nguyên lí thể hiện mối liên hệ điện, sơ đồ lắp đặt thể hiện vị trí lắp đặt.", "D. Không có sự khác biệt."], ans: "C" },
+        { q: "Vật liệu nào sau đây thường dùng làm dây dẫn điện trong nhà?", options: ["A. Dây thép.", "B. Dây đồng.", "C. Dây nhôm trần.", "D. Dây nhựa."], ans: "B" },
+        { q: "Thiết bị nào dùng để bảo vệ mạng điện khi xảy ra sự cố ngắn mạch?", options: ["A. Công tắc.", "B. Aptomat (CB).", "C. Ổ cắm.", "D. Đèn sợi đốt."], ans: "B" },
+        { q: "Dụng cụ nào thường dùng để tuốt vỏ dây dẫn khi lắp đặt?", options: ["A. Kìm tuốt dây.", "B. Bút thử điện.", "C. Tua vít.", "D. Khoan tay."], ans: "A" },
+        { type: "tf", q: "Về thiết bị đóng cắt và lấy điện:", items: [
+            { id: "cn1_13a", text: "a) Công tắc điện dùng để lấy điện cho thiết bị tiêu thụ.", ans: "S" },
+            { id: "cn1_13b", text: "b) Aptomat có chức năng tự động ngắt mạch khi quá tải.", ans: "Đ" },
+            { id: "cn1_13c", text: "c) Ổ cắm điện là thiết bị đóng cắt mạch điện.", ans: "S" },
+            { id: "cn1_13d", text: "d) Điện áp định mức là thông số cần lưu ý khi chọn thiết bị.", ans: "Đ" }
+        ]},
+        { type: "tf", q: "Về dụng cụ đo điện:", items: [
+            { id: "cn1_14a", text: "a) Vôn kế dùng để đo điện áp.", ans: "Đ" },
+            { id: "cn1_14b", text: "b) Ampe kế dùng để đo cường độ dòng điện.", ans: "Đ" },
+            { id: "cn1_14c", text: "c) Trước khi sử dụng vôn kế cần kiểm tra kim đo có chỉ về số 0 không.", ans: "Đ" },
+            { id: "cn1_14d", text: "d) Có thể dùng ampe kế để đo điện áp trực tiếp.", ans: "S" }
+        ]},
+        { type: "tf", q: "Về sơ đồ mạng điện:", items: [
+            { id: "cn1_15a", text: "a) Sơ đồ nguyên lí dùng để dự trù vật liệu.", ans: "S" },
+            { id: "cn1_15b", text: "b) Sơ đồ lắp đặt giúp người thợ thi công đúng vị trí.", ans: "Đ" },
+            { id: "cn1_15c", text: "c) Kí hiệu quy ước trong sơ đồ là thống nhất.", ans: "Đ" },
+            { id: "cn1_15d", text: "d) Sơ đồ nguyên lí không thể hiện được các mối nối điện.", ans: "S" }
+        ]},
+        { type: "tf", q: "Về vật liệu và thiết bị lắp đặt:", items: [
+            { id: "cn1_16a", text: "a) Dây dẫn điện phải có vỏ cách điện.", ans: "Đ" },
+            { id: "cn1_16b", text: "b) Cầu chì có thể thay thế bằng dây đồng thường.", ans: "S" },
+            { id: "cn1_16c", text: "c) Khi chọn thiết bị cần chú ý đến công suất tiêu thụ của phụ tải.", ans: "Đ" },
+            { id: "cn1_16d", text: "d) Dụng cụ cầm tay như kìm, tua vít cần có tay cầm cách điện.", ans: "Đ" }
+        ]}
+    ],
 
-        let activeQuestions = [];
-        let currentIndex = 0;
-        let score = 0;
-        let isChecked = false;
-        let selectedMCIdx = null;
+    cn2: [
+        { q: "Thiết bị nào sau đây có chức năng tự động cắt mạch điện khi xảy ra sự cố quá tải hoặc ngắn mạch trong mạng điện gia đình?", options: ["A. Công tắc điện.", "B. Aptomat (Cầu dao tự động).", "C. Ổ cắm điện.", "D. Phích cắm điện."], ans: "B" },
+        { q: "Thông số '220V - 10A' ghi trên vỏ của một công tắc điện cho biết điều gì?", options: ["A. Điện áp định mức là 220V, dòng điện định mức là 10A.", "B. Điện áp lớn nhất là 220V, dòng điện tiêu thụ luôn luôn là 10A.", "C. Công suất định mức của công tắc là 220V và 10A.", "D. Điện áp tối thiểu là 220V, dòng điện ngắn mạch là 10A."], ans: "A" },
+        { q: "Bộ phận cách điện của một cầu dao điện được thiết kế nhằm mục đích chính nào?", options: ["A. Tăng tính thẩm mỹ và giảm giá thành.", "B. Bảo vệ người sử dụng không bị tiếp xúc trực tiếp với phần tử mang điện gây nguy hiểm.", "C. Giúp thiết bị chịu dòng điện lớn.", "D. Giúp các thanh dẫn liên kết chắc chắn hơn."], ans: "B" },
+        { q: "Thiết bị nào dưới đây là dụng cụ đo điện dùng để đo điện áp của mạng điện trong nhà?", options: ["A. Ampe kế.", "B. Điện năng kế.", "C. Vôn kế.", "D. Ôm kế."], ans: "C" },
+        { q: "Khi quan sát mặt một dụng cụ đo điện thấy có kí hiệu chữ V, dụng cụ đó dùng để đo đại lượng nào?", options: ["A. Cường độ dòng điện.", "B. Điện áp.", "C. Công suất điện.", "D. Điện trở mạch điện."], ans: "B" },
+        { q: "Khi sử dụng đồng hồ vạn năng điện tử để đo điện áp xoay chiều của mạng điện gia đình, ta phải chuyển núm vặn sang thang đo nào?", options: ["A. Thang đo dòng điện một chiều.", "B. Thang đo điện trở.", "C. Thang đo điện áp xoay chiều (ACV) lớn hơn 220V.", "D. Thang đo điện áp một chiều nhỏ hơn 220V."], ans: "C" },
+        { q: "Sơ đồ biểu diễn chi tiết vị trí lắp đặt của thiết bị, bảng điện, bóng đèn và đường đi dây dẫn được gọi là:", options: ["A. Sơ đồ nguyên lí.", "B. Sơ đồ lắp đặt.", "C. Sơ đồ khối.", "D. Sơ đồ không gian."], ans: "B" },
+        { q: "Chức năng chính của sơ đồ nguyên lí mạng điện là gì?", options: ["A. Cho biết vị trí chính xác trên tường.", "B. Cho biết kích thước thực tế dây dẫn.", "C. Giúp hiểu mối quan hệ về chức năng và dòng điện giữa các phần tử.", "D. Hướng dẫn khoan lỗ và luồn dây."], ans: "C" },
+        { q: "Kí hiệu quy ước vòng tròn có dấu X bên trong biểu diễn cho phần tử nào?", options: ["A. Cầu chì.", "B. Công tắc hai cực.", "C. Ổ cắm điện.", "D. Đèn sợi đốt."], ans: "D" },
+        { q: "Vật liệu nào sau đây được phân loại vào nhóm vật liệu cách điện trong nhà?", options: ["A. Dây sợi đồng.", "B. Ống luồn dây bằng nhựa PVC.", "C. Lõi dây nhôm.", "D. Thanh dẫn bằng đồng."], ans: "B" },
+        { q: "Dụng cụ nào chuyên dùng để gọt vỏ cách điện của dây dẫn điện an toàn, nhanh chóng?", options: ["A. Kìm tuốt dây.", "B. Tua vít.", "C. Khoan tay.", "D. Búa."], ans: "A" },
+        { q: "Tại sao khi lựa chọn dây dẫn cho bếp từ công suất lớn (2000W - 4000W), phải chọn dây tiết diện lớn (2,5 - 4 mm²)?", options: ["A. Để dây dài hơn và dễ uốn.", "B. Để dây chịu dòng điện lớn, tránh quá tải gây nóng chảy vỏ và chập cháy.", "C. Để tiết kiệm chi phí.", "D. Để tăng điện áp."], ans: "B" },
+        { type: "tf", q: "Một gia đình chọn mua một aptomat tổng ghi 220V - 32A:", items: [
+            { id: "cn2_13a", text: "a) Thông số 220V là điện áp định mức tối đa mà aptomat làm việc an toàn.", ans: "Đ" },
+            { id: "cn2_13b", text: "b) Nếu tổng dòng điện các thiết bị lên tới 40A, aptomat sẽ tự động ngắt.", ans: "Đ" },
+            { id: "cn2_13c", text: "c) Aptomat này sử dụng an toàn cho mạng điện 3 pha 380V.", ans: "S" },
+            { id: "cn2_13d", text: "d) Chọn aptomat dòng định mức quá lớn so với tải thực tế vẫn bảo vệ tuyệt đối.", ans: "S" }
+        ]},
+        { type: "tf", q: "Sử dụng ampe kế kìm để kiểm tra dòng điện thiết bị gia dụng:", items: [
+            { id: "cn2_14a", text: "a) Ampe kế kìm dùng để đo công suất tiêu thụ điện (kWh).", ans: "S" },
+            { id: "cn2_14b", text: "b) Khi đo cần kẹp đồng thời cả 2 sợi dây pha và trung tính vào vòng kìm.", ans: "S" },
+            { id: "cn2_14c", text: "c) Ampe kế giúp kiểm tra thiết bị có đang hoạt động quá tải hay không.", ans: "Đ" },
+            { id: "cn2_14d", text: "d) Sử dụng thang đo ampe có giới hạn nhỏ hơn dòng điện thực tế có nguy cơ hỏng đồng hồ.", ans: "Đ" }
+        ]},
+        { type: "tf", q: "Sơ đồ mạng điện gồm 1 cầu chì, 1 ổ cắm luôn có điện, 1 công tắc điều khiển bóng đèn:", items: [
+            { id: "cn2_15a", text: "a) Trên sơ đồ nguyên lí, cầu chì mắc nối tiếp trên dây trung tính (N).", ans: "S" },
+            { id: "cn2_15b", text: "b) Trên sơ đồ lắp đặt, thấy được khoảng cách và vị trí cụ thể của bảng điện.", ans: "Đ" },
+            { id: "cn2_15c", text: "c) Sơ đồ lắp đặt luôn được vẽ trước, sau đó mới suy ra sơ đồ nguyên lí.", ans: "S" },
+            { id: "cn2_15d", text: "d) Khi vẽ sơ đồ nguyên lí, dây pha và dây trung tính thường vẽ song song.", ans: "Đ" }
+        ]},
+        { type: "tf", q: "Vật tư lắp đặt đường dây dẫn điện đi nổi trên tường phòng học:", items: [
+            { id: "cn2_16a", text: "a) Ống luồn dây nhựa PVC chỉ làm đẹp chứ không bảo vệ cơ học.", ans: "S" },
+            { id: "cn2_16b", text: "b) Dây dẫn dùng trong nhà thường là loại lõi nhiều sợi đồng mềm.", ans: "Đ" },
+            { id: "cn2_16c", text: "c) Kẹp đỡ ống giúp cố định ống chắc chắn trên tường, tránh võng.", ans: "Đ" },
+            { id: "cn2_16d", text: "d) Khi luồn dây nên nhồi nhét tối đa 100% không gian bên trong ống.", ans: "S" }
+        ]}
+    ],
 
-        function switchSubject(subject) {
-            currentSubject = subject;
-            const btnKHTN = document.getElementById('btn-subject-khtn');
-            const btnGDCD = document.getElementById('btn-subject-gdcd');
-            const header = document.getElementById('app-header');
-            const headerTitle = document.getElementById('header-title');
-            const welcomeTitle = document.getElementById('welcome-title');
-            const container = document.getElementById('exam-buttons-container');
+    cn3: [
+        { q: "Thiết bị nào sau đây là thiết bị đóng cắt trong mạng điện trong nhà?", options: ["A. Ổ cắm điện.", "B. Phích cắm điện.", "C. Công tắc điện.", "D. Bóng đèn."], ans: "C" },
+        { q: "Thông số kĩ thuật 'Udm = 250V' ghi trên ổ cắm điện cho biết điều gì?", options: ["A. Điện áp định mức của ổ cắm.", "B. Dòng điện định mức của ổ cắm.", "C. Công suất định mức của ổ cắm.", "D. Điện trở của ổ cắm."], ans: "A" },
+        { q: "Vỏ của công tắc, ổ cắm điện thường được làm bằng nhựa cách điện nhằm mục đích gì?", options: ["A. Làm thiết bị đẹp hơn.", "B. Đảm bảo an toàn điện cho người sử dụng.", "C. Tăng khả năng dẫn điện.", "D. Giảm tổn hao."], ans: "B" },
+        { q: "Dụng cụ nào dùng để đo điện năng tiêu thụ của một gia đình?", options: ["A. Vôn kế.", "B. Ampe kế.", "C. Oát kế.", "D. Công tơ điện."], ans: "D" },
+        { q: "Dụng cụ nào sau đây dùng để đo cường độ dòng điện?", options: ["A. Ampe kế.", "B. Vôn kế.", "C. Công tơ điện.", "D. Nhiệt kế."], ans: "A" },
+        { q: "Khi đo điện áp giữa hai đầu bóng đèn bằng vôn kế, cần mắc vôn kế như thế nào?", options: ["A. Nối tiếp với bóng đèn.", "B. Nối tiếp với công tắc.", "C. Song song với bóng đèn.", "D. Nối tiếp với nguồn điện."], ans: "C" },
+        { q: "Sơ đồ nguyên lí của mạng điện trong nhà là sơ đồ:", options: ["A. Thể hiện vị trí lắp đặt.", "B. Chỉ rõ mối liên hệ về điện giữa các phần tử, không thể hiện vị trí lắp đặt.", "C. Thể hiện kích thước các phòng.", "D. Chỉ gồm nguồn và dây dẫn."], ans: "B" },
+        { q: "Chức năng chính của sơ đồ lắp đặt mạng điện trong nhà là gì?", options: ["A. Giải thích nguyên lí làm việc.", "B. Tính toán công suất.", "C. Cho biết giá tiền.", "D. Làm cơ sở thi công, lắp đặt: thể hiện vị trí, cách bố trí thiết bị và đường dây."], ans: "D" },
+        { q: "Phát biểu nào sau đây về sơ đồ nguyên lí và sơ đồ lắp đặt là đúng?", options: ["A. Sơ đồ nguyên lí dùng để tìm hiểu nguyên lí, sơ đồ lắp đặt dùng để thi công lắp đặt.", "B. Hai loại sơ đồ hoàn toàn giống nhau.", "C. Sơ đồ nguyên lí thể hiện đúng vị trí thực tế.", "D. Sơ đồ lắp đặt không cần dùng kí hiệu quy ước."], ans: "A" },
+        { q: "Dụng cụ nào dùng để bóc lớp vỏ cách điện của dây dẫn điện?", options: ["A. Kìm nhọn.", "B. Tua vít.", "C. Kìm tuốt dây.", "D. Búa."], ans: "C" },
+        { q: "Vật liệu nào thường được dùng làm lõi dây dẫn điện trong nhà?", options: ["A. Nhựa.", "B. Đồng.", "C. Cao su.", "D. Sứ."], ans: "B" },
+        { q: "Vì sao phải chọn dây dẫn có tiết diện phù hợp với công suất thiết bị điện?", options: ["A. Để dây đẹp hơn.", "B. Để dây dễ uốn.", "C. Để thiết bị không tiêu thụ điện.", "D. Để dây không bị quá nóng, tránh chập cháy."], ans: "D" },
+        { type: "tf", q: "Trên một ổ cắm điện ghi thông số 250V – 10A:", items: [
+            { id: "cn3_13a", text: "a) Thông số cho biết điện áp định mức 250V và dòng điện định mức 10A.", ans: "Đ" },
+            { id: "cn3_13b", text: "b) Công tắc điện cần được mắc vào dây pha để khi ngắt, đèn không còn mang điện.", ans: "Đ" },
+            { id: "cn3_13c", text: "c) Ổ cắm và phích cắm đều là thiết bị đóng cắt mạch điện.", ans: "S" },
+            { id: "cn3_13d", text: "d) Có thể dùng ổ cắm này cắm bếp điện 220V – 3000W một cách an toàn.", ans: "S" }
+        ]},
+        { type: "tf", q: "Bạn Nam dùng đồng hồ vạn năng đo thông số mạch điện:", items: [
+            { id: "cn3_14a", text: "a) Đồng hồ vạn năng đo được điện áp, cường độ dòng điện và điện trở.", ans: "Đ" },
+            { id: "cn3_14b", text: "b) Khi đo điện áp, vôn kế phải mắc nối tiếp với đoạn mạch cần đo.", ans: "S" },
+            { id: "cn3_14c", text: "c) Trước khi đo cần ước lượng giá trị để chọn thang đo lớn hơn.", ans: "Đ" },
+            { id: "cn3_14d", text: "d) Để đo điện áp 220V của ổ cắm, Nam đặt núm xoay ở thang DCV 250V là đúng.", ans: "S" }
+        ]},
+        { type: "tf", q: "Khi thiết kế mạng điện trong nhà, người ta vẽ sơ đồ nguyên lí và sơ đồ lắp đặt:", items: [
+            { id: "cn3_15a", text: "a) Sơ đồ nguyên lí chỉ rõ mối liên hệ điện giữa các phần tử, không thể hiện vị trí lắp đặt.", ans: "Đ" },
+            { id: "cn3_15b", text: "b) Sơ đồ lắp đặt cho biết vị trí lắp đặt và cách bố trí, đi dây.", ans: "Đ" },
+            { id: "cn3_15c", text: "c) Trong sơ đồ nguyên lí, các phần tử vẽ đúng vị trí thật trong nhà.", ans: "S" },
+            { id: "cn3_15d", text: "d) Sơ đồ nguyên lí gồm công tắc điều khiển bóng đèn, công tắc mắc nối tiếp với đèn.", ans: "Đ" }
+        ]},
+        { type: "tf", q: "Gia đình bác Hoa lắp đặt mạch điện phòng khách và bình nóng lạnh:", items: [
+            { id: "cn3_16a", text: "a) Đồng và nhôm là vật liệu dẫn điện thường dùng làm lõi dây điện.", ans: "Đ" },
+            { id: "cn3_16b", text: "b) Có thể dùng băng dính giấy thay băng dính cách điện quấn mối nối.", ans: "S" },
+            { id: "cn3_16c", text: "c) Dây dẫn tiết diện càng nhỏ càng chịu dòng điện lớn.", ans: "S" },
+            { id: "cn3_16d", text: "d) Bình nóng lạnh 220V – 2500W dòng làm việc ~11,4A, chọn aptomat 16A bảo vệ.", ans: "Đ" }
+        ]}
+    ],
 
-            if (subject === 'khtn') {
-                btnKHTN.className = "px-6 py-3 rounded-xl font-bold transition-all shadow-md bg-blue-600 text-white";
-                btnGDCD.className = "px-6 py-3 rounded-xl font-bold transition-all shadow-md bg-gray-200 text-gray-700 hover:bg-gray-300";
-                header.className = "bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 rounded-2xl shadow-xl mb-6 text-center transition-all";
-                headerTitle.innerText = "🚀 Ôn Luyện Khoa Học Tự Nhiên 9";
-                welcomeTitle.innerText = "Chọn bộ đề ôn tập Khoa Học Tự Nhiên 9 (4 Đề Chuẩn):";
-                
-                container.innerHTML = `
-                    <button onclick="startExam(1)" class="p-4 bg-blue-50 border-2 border-blue-500 rounded-xl font-bold text-blue-700 hover:bg-blue-600 hover:text-white transition shadow-sm">📝 Ôn Tập Đề 1</button>
-                    <button onclick="startExam(2)" class="p-4 bg-indigo-50 border-2 border-indigo-500 rounded-xl font-bold text-indigo-700 hover:bg-indigo-600 hover:text-white transition shadow-sm">📝 Ôn Tập Đề 2</button>
-                    <button onclick="startExam(3)" class="p-4 bg-purple-50 border-2 border-purple-500 rounded-xl font-bold text-purple-700 hover:bg-purple-600 hover:text-white transition shadow-sm">📝 Ôn Tập Đề 3</button>
-                    <button onclick="startExam(4)" class="p-4 bg-cyan-50 border-2 border-cyan-500 rounded-xl font-bold text-cyan-700 hover:bg-cyan-600 hover:text-white transition shadow-sm">📝 Ôn Tập Đề 4</button>
+    lichsu: [
+        { q: "Quốc tế Cộng sản được thành lập (3/1919) nhằm mục đích chủ yếu nào?", options: ["A. Lãnh đạo phong trào cách mạng công nhân và nhân dân các nước thuộc địa.", "B. Duy trì trật tự thế giới mới.", "C. Hỗ trợ tư bản khắc phục hậu quả chiến tranh.", "D. Thành lập liên minh quân sự chống phát xít."], ans: "A" },
+        { q: "Ý nào không phải nguyên nhân phát triển nhanh chóng kinh tế Mỹ sau Chiến tranh thế giới thứ nhất?", options: ["A. Không bị chiến tranh tàn phá.", "B. Thu lợi nhuận nhờ bán vũ khí.", "C. Biện pháp cải tiến kĩ thuật, tăng năng suất.", "D. Nhờ sự viện trợ của các nước tư bản phương Tây."], ans: "D" },
+        { q: "Lãnh tụ phong trào dân tộc ở Ấn Độ giai đoạn 1918-1939 là?", options: ["A. B. Ti-lắc.", "B. M. Gan-đi.", "C. G. Nê-ru.", "D. R. Ta-go."], ans: "B" },
+        { q: "Phong trào Ngũ tứ ở Trung Quốc mở đầu bằng cuộc đấu tranh của lực lượng nào?", options: ["A. Sinh viên.", "B. Công nhân.", "C. Nông dân.", "D. Tư sản dân tộc."], ans: "A" },
+        { q: "Để chiến thắng chủ nghĩa phát xít trong Chiến tranh thế giới thứ hai, Liên Xô có vai trò thế nào?", options: ["A. Hỗ trợ Mỹ, Anh, Pháp vũ khí.", "B. Là lực lượng đi đầu cùng Mỹ và Anh.", "C. Là lực lượng đi đầu, giữ vai trò trụ cột và có đóng góp quyết định nhất.", "D. Chỉ góp phần nhỏ."], ans: "C" },
+        { q: "Phong trào công nhân Việt Nam giai đoạn 1926-1929 khác gì so với giai đoạn 1919-1925?", options: ["A. Số lượng bãi công ít nhưng quy mô lớn.", "B. Các cuộc đấu tranh mang tính chất chính trị rõ nét, bắt đầu liên kết nhiều ngành, địa phương.", "C. Dưới sự lãnh đạo trực tiếp của Đảng.", "D. Hoàn toàn chuyển sang tự giác."], ans: "B" },
+        { q: "Trong thập niên 20 của thế kỉ XX, nước nào là trung tâm công nghiệp, thương mại, tài chính quốc tế?", options: ["A. Đức.", "B. Anh.", "C. Mỹ.", "D. Nhật."], ans: "C" },
+        { q: "Quốc tế Cộng sản ra đời trong hoàn cảnh nào?", options: ["A. Cao trào cách mạng dâng cao ở các nước châu Âu dẫn đến thành lập các đảng cộng sản.", "B. Chính quyền tư sản đàn áp khủng bố.", "C. Hoạt động tích cực của Lênin.", "D. Quốc tế thứ hai giải tán."], ans: "A" },
+        { q: "Đảng Cộng sản Nhật Bản thành lập vào thời gian nào?", options: ["A. 7/1921.", "B. 8/1922.", "C. 7/1922.", "D. 6/1922."], ans: "C" },
+        { q: "Phong trào Ngũ tứ ở Trung Quốc mở đầu bằng sự kiện nào?", options: ["A. Biểu tình của 3000 sinh viên ở Bắc Kinh.", "B. Biểu tình của 3000 công nhân.", "C. Biểu tình của 3000 nông dân.", "D. Biểu tình đông đảo trí thức."], ans: "A" },
+        { q: "Điểm tương đồng về nguyên nhân sâu xa dẫn đến sự bùng nổ của hai cuộc chiến tranh thế giới là gì?", options: ["A. Tư tưởng thù ghét cộng sản.", "B. Mâu thuẫn giữa các nước đế quốc về thị trường, thuộc địa.", "C. Mâu thuẫn giữa nhân dân thuộc địa với đế quốc.", "D. Phát xít lên cầm quyền."], ans: "B" },
+        { q: "Báo Thanh niên và Đường Kách mệnh trang bị lí luận gì cho cán bộ Hội VN Cách mạng Thanh niên?", options: ["A. Tư tưởng Tam dân.", "B. Dân chủ tư sản.", "C. Lí luận cách mạng giải phóng dân tộc.", "D. Quân phiệt hiếu chiến."], ans: "C" },
+        { type: "tf", q: "Đọc tư liệu về sự kiện Nguyễn Ái Quốc đọc Luận cương của Lênin (7/1920):", items: [
+            { id: "su_13a", text: "a. Tháng 7/1920, NAQ đọc Sơ thảo Luận cương về vấn đề dân tộc và thuộc địa của Lênin.", ans: "Đ" },
+            { id: "su_13b", text: "b. Sau khi đọc Luận cương, NAQ hoàn toàn tin theo Lênin và Quốc tế thứ ba.", ans: "Đ" },
+            { id: "su_13c", text: "c. Con đường cứu nước NAQ tìm ra là con đường cách mạng dân chủ tư sản.", ans: "S" },
+            { id: "su_13d", text: "d. Tìm ra con đường cứu nước đúng đắn là bước chuẩn bị đầu tiên về tư tưởng, chính trị cho sự ra đời của Đảng.", ans: "Đ" }
+        ]},
+        { type: "tf", q: "Đọc tư liệu về việc Mỹ ném bom nguyên tử xuống Nhật Bản năm 1945:", items: [
+            { id: "su_14a", text: "a. Tháng 8/1945, Mỹ ném 2 quả bom nguyên tử xuống Hiroshima và Nagasaki.", ans: "Đ" },
+            { id: "su_14b", text: "b. Đây là yếu tố quyết định nhất buộc phát xít Nhật đầu hàng.", ans: "S" },
+            { id: "su_14c", text: "c. Thảm họa hạt nhân để lại hậu quả nặng nề kéo dài đối với người dân Nhật.", ans: "Đ" },
+            { id: "su_14d", text: "d. Đặt ra bài học lịch sử về trách nhiệm bảo vệ hòa bình, chống chiến tranh hạt nhân.", ans: "Đ" }
+        ]},
+        { type: "tf", q: "Đọc tư liệu về hành trình hoạt động của Nguyễn Ái Quốc (1919 - 1920):", items: [
+            { id: "su_15a", text: "a) Năm 1919, Nguyễn Tất Thành gửi Bản Yêu sách nhân dân An Nam tới Hội nghị Véc-xai.", ans: "Đ" },
+            { id: "su_15b", text: "b) Câu thơ 'Phút khóc đầu tiên là phút Bác Hồ cười' phản ánh sự kiện ra đi tìm đường cứu nước.", ans: "S" },
+            { id: "su_15c", text: "c) NAQ trở thành người cộng sản đầu tiên của Việt Nam khi tham gia thành lập Đảng Cộng sản Pháp.", ans: "Đ" },
+            { id: "su_15d", text: "d) Sự kiện bỏ phiếu tán thành Quốc tế 3 đánh dấu bước chuyển biến về hành động tiếp nối nhận thức.", ans: "Đ" }
+        ]},
+        { type: "tf", q: "Đọc tư liệu về tình hình cuối Chiến tranh thế giới thứ hai:", items: [
+            { id: "su_16a", text: "a) Ý tưởng thành lập tổ chức quốc tế duy trì hòa bình xuất hiện rõ ngay từ đầu chiến tranh.", ans: "S" },
+            { id: "su_16b", text: "b) Yêu cầu cấp bách là phải tổ chức lại trật tự thế giới sau chiến tranh.", ans: "Đ" },
+            { id: "su_16c", text: "c) Ưu thế phe Đồng minh giai đoạn cuối chiến tranh là điều kiện thuận lợi xây dựng trật tự mới.", ans: "Đ" },
+            { id: "su_16d", text: "d) Xây dựng cơ chế hợp tác quốc tế duy trì hòa bình là nhu cầu quan trọng của thế giới.", ans: "Đ" }
+        ]}
+    ],
+
+    dialy: [
+        { q: "Đặc điểm nào phản ánh đúng nguồn lao động nước ta hiện nay?", options: ["A. Chỉ tập trung trong nông nghiệp.", "B. Nguồn lao động dồi dào, chất lượng từng bước được nâng cao.", "C. Tỉ lệ qua đào tạo luôn đạt 100%.", "D. Phân bố đồng đều."], ans: "B" },
+        { q: "Biểu hiện nào phản ánh xu hướng thay đổi trong phân bố các dân tộc ở Việt Nam?", options: ["A. Cư trú địa bàn riêng biệt.", "B. Mỗi vùng tối đa 2 dân tộc.", "C. Dân tộc thiểu số tập trung ven biển.", "D. Phân bố ngày càng đan xen trên lãnh thổ."], ans: "D" },
+        { q: "Vùng chuyên canh cây chè lớn nhất ở nước ta là:", options: ["A. Bắc Trung Bộ.", "B. Đông Nam Bộ.", "C. Đồng bằng sông Hồng.", "D. Trung du và miền núi phía Bắc."], ans: "D" },
+        { q: "Các ngành công nghiệp dệt may, da giày thường tập trung ở những nơi nào?", options: ["A. Gần thị trường tiêu thụ và nguồn lao động.", "B. Vùng duyên hải.", "C. Nông thôn.", "D. Gần nguồn nguyên liệu."], ans: "A" },
+        { q: "Khu vực nào có hoạt động công nghiệp tập trung lớn, gắn với nhiều khu công nghiệp và đô thị?", options: ["A. Nam Trung Bộ.", "B. Đồng bằng sông Cửu Long.", "C. Đồng bằng sông Hồng và vùng phụ cận.", "D. Trung du miền núi phía Bắc."], ans: "C" },
+        { q: "Nhân tố quan trọng nào làm thay đổi khai thác, sử dụng tài nguyên và phân bố công nghiệp?", options: ["A. Thị trường.", "B. Chính sách.", "C. Tiến bộ khoa học - kĩ thuật.", "D. Dân cư và lao động."], ans: "C" },
+        { q: "Xu hướng thay đổi nổi bật trong phân bố các dân tộc ở Việt Nam hiện nay là:", options: ["A. Phân bố tách biệt.", "B. Mỗi vùng một hai dân tộc.", "C. Dân tộc thiểu số tập trung đô thị lớn.", "D. Phân bố đan xen trên lãnh thổ."], ans: "D" },
+        { q: "Loại cây công nghiệp lâu năm nào phù hợp với điều kiện đất badan trên các cao nguyên?", options: ["A. Cói.", "B. Chè.", "C. Cà phê.", "D. Đay."], ans: "C" },
+        { type: "tf", q: "Cho bảng số liệu cơ cấu dân số theo nhóm tuổi của Việt Nam giai đoạn 1999 - 2024:", items: [
+            { id: "dia_13a", text: "a) Năm 2024, nhóm tuổi 15–64 chiếm tỉ trọng lớn nhất.", ans: "Đ" },
+            { id: "dia_13b", text: "b) Tỉ trọng người từ 65 tuổi trở lên năm 2024 thấp hơn năm 2019.", ans: "S" },
+            { id: "dia_13c", text: "c) Giai đoạn 2019-2024, tỉ trọng nhóm dưới 15 tuổi giảm 1%.", ans: "Đ" },
+            { id: "dia_13d", text: "d) Kết luận năm 2024 Việt Nam không còn đối mặt với xu hướng già hóa dân số.", ans: "S" }
+        ]},
+        { type: "sa", q: "(Trả lời ngắn): Tỉ lệ dân thành thị ở nước ta năm 2025 chiếm bao nhiêu %? (Chỉ ghi số)", ans: "38.6" },
+        { type: "sa", q: "(Trả lời ngắn): Năm 2025, dân số nước ta là 102,3 triệu người, tỉ lệ dân nông thôn là 61,4%. Tính dân số nông thôn (làm tròn 1 chữ số thập phân, đơn vị: triệu người).", ans: "62.8" },
+        { type: "sa", q: "(Trả lời ngắn): Diện tích rừng trồng mới tập trung năm 2021 là 290 nghìn ha, năm 2025 ước đạt 323,3 nghìn ha. Năm 2025 nhiều hơn năm 2021 bao nhiêu nghìn ha?", ans: "33.3" },
+        { type: "sa", q: "(Trả lời ngắn): Tốc độ tăng chỉ số sản xuất công nghiệp năm 2023 là 1,3%, năm 2025 là 9,2%. Cao hơn bao nhiêu điểm phần trăm?", ans: "7.9" }
+    ]
+};
+
+// Gộp chung 3 đề Công Nghệ vào 1 mục nếu chọn "cn_all"
+function getCurrentData() {
+    if (currentSection === 'cn_all') {
+        return [...dataStore.cn1, ...dataStore.cn2, ...dataStore.cn3];
+    }
+    return dataStore[currentSection];
+}
+
+let currentSection = "cn1";
+
+function switchSection(sec) {
+    currentSection = sec;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('result-display').style.display = 'none';
+    renderQuiz();
+}
+
+function renderQuiz() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = "";
+    const list = getCurrentData();
+
+    list.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.id = `card_${idx}`;
+
+        if (!q.type || q.type === 'mcq') {
+            let optionsHTML = '';
+            q.options.forEach(opt => {
+                const letter = opt.trim().charAt(0);
+                optionsHTML += `
+                    <label>
+                        <input type="radio" name="q_${idx}" value="${letter}" onchange="checkInstantMCQ(${idx}, '${q.ans}')"> ${opt}
+                    </label>
                 `;
-            } else {
-                btnGDCD.className = "px-6 py-3 rounded-xl font-bold transition-all shadow-md bg-teal-600 text-white";
-                btnKHTN.className = "px-6 py-3 rounded-xl font-bold transition-all shadow-md bg-gray-200 text-gray-700 hover:bg-gray-300";
-                header.className = "bg-gradient-to-r from-teal-700 to-emerald-800 text-white p-6 rounded-2xl shadow-xl mb-6 text-center transition-all";
-                headerTitle.innerText = "📚 Ôn Luyện Giáo Dục Công Dân 9";
-                welcomeTitle.innerText = "Chọn bộ đề ôn tập Giáo Dục Công Dân 9 (Đề 1, 2, 3 đầy đủ):";
-                
-                container.innerHTML = `
-                    <button onclick="startExam(1)" class="p-4 bg-teal-50 border-2 border-teal-500 rounded-xl font-bold text-teal-700 hover:bg-teal-600 hover:text-white transition shadow-sm col-span-1">📝 Đề 1 (GDCD)</button>
-                    <button onclick="startExam(2)" class="p-4 bg-emerald-50 border-2 border-emerald-500 rounded-xl font-bold text-emerald-700 hover:bg-emerald-600 hover:text-white transition shadow-sm col-span-1">📝 Đề 2 (GDCD)</button>
-                    <button onclick="startExam(3)" class="p-4 bg-green-50 border-2 border-green-500 rounded-xl font-bold text-green-700 hover:bg-green-600 hover:text-white transition shadow-sm col-span-2 sm:col-span-1">📝 Đề 3 (GDCD)</button>
+            });
+            card.innerHTML = `
+                <div class="question-title">${idx + 1}. ${q.q}</div>
+                <div class="options">${optionsHTML}</div>
+                <div id="feedback_${idx}" class="feedback-text"></div>
+            `;
+        } 
+        else if (q.type === 'tf') {
+            let rowsHTML = '';
+            q.items.forEach(item => {
+                rowsHTML += `
+                    <tr>
+                        <td>${item.text}</td>
+                        <td style="width: 130px; text-align: center;">
+                            <label style="display:inline; margin-right:8px;"><input type="radio" name="${item.id}" value="Đ" onchange="checkInstantTF('${item.id}', '${item.ans}', ${idx})"> Đ</label>
+                            <label style="display:inline;"><input type="radio" name="${item.id}" value="S" onchange="checkInstantTF('${item.id}', '${item.ans}', ${idx})"> S</label>
+                        </td>
+                    </tr>
                 `;
-            }
-            resetApp();
+            });
+            card.innerHTML = `
+                <div class="question-title">${idx + 1}. ${q.q}</div>
+                <table class="tf-table">
+                    <thead><tr><th>Nội dung</th><th>Chọn (Đ/S)</th></tr></thead>
+                    <tbody>${rowsHTML}</tbody>
+                </table>
+                <div id="feedback_${idx}" class="feedback-text"></div>
+            `;
+        }
+        else if (q.type === 'sa') {
+            card.innerHTML = `
+                <div class="question-title">${idx + 1}. ${q.q}</div>
+                <input type="text" id="sa_${idx}" placeholder="Nhập đáp án..." oninput="checkInstantSA(${idx}, '${q.ans}')">
+                <div id="feedback_${idx}" class="feedback-text"></div>
+            `;
         }
 
-        function resetApp() {
-            document.getElementById('welcome-screen').classList.remove('hidden');
-            document.getElementById('quiz-screen').classList.add('hidden');
-            document.getElementById('result-screen').classList.add('hidden');
+        container.appendChild(card);
+    });
+}
+
+// TÍNH NĂNG BÁO ĐÚNG SAI NGAY LẬP TỨC KHI TƯƠNG TÁC
+function checkInstantMCQ(idx, correctAns) {
+    const selected = document.querySelector(`input[name="q_${idx}"]:checked`);
+    const feedback = document.getElementById(`feedback_${idx}`);
+    const card = document.getElementById(`card_${idx}`);
+    if (selected) {
+        if (selected.value === correctAns) {
+            feedback.innerHTML = `<span class="correct-text">✓ Chính xác!</span>`;
+            card.className = "card correct";
+        } else {
+            feedback.innerHTML = `<span class="wrong-text">✗ Chưa đúng. Đáp án chuẩn là: ${correctAns}</span>`;
+            card.className = "card wrong";
         }
+    }
+}
 
-        function startExam(id) {
-            const db = (currentSubject === 'khtn') ? dbKHTN : dbGDCD;
-            if (id === 'all') {
-                activeQuestions = [];
-                Object.keys(db).forEach(k => { if(db[k].length > 0) activeQuestions.push(...db[k]); });
-            } else {
-                activeQuestions = [...db[id]];
-            }
-            currentIndex = 0;
-            score = 0;
-            document.getElementById('welcome-screen').classList.add('hidden');
-            document.getElementById('quiz-screen').classList.remove('hidden');
-            loadQuestion();
+function checkInstantTF(id, correctAns, cardIdx) {
+    const selected = document.querySelector(`input[name="${id}"]:checked`);
+    if (selected) {
+        const parentTr = selected.closest('tr');
+        if (selected.value === correctAns) {
+            parentTr.style.background = "#dcfce7";
+        } else {
+            parentTr.style.background = "#fee2e2";
         }
+    }
+}
 
-        function loadQuestion() {
-            isChecked = false;
-            selectedMCIdx = null;
-            const q = activeQuestions[currentIndex];
-            document.getElementById('question-progress').innerText = `Câu ${currentIndex + 1} / ${activeQuestions.length}`;
-            document.getElementById('question-content').innerHTML = q.q;
-            document.getElementById('explanation-box').classList.add('hidden');
-            document.getElementById('action-btn').innerText = "Kiểm tra đáp án";
+function checkInstantSA(idx, correctAns) {
+    const inputVal = document.getElementById(`sa_${idx}`).value.trim().toLowerCase().replace(',', '.');
+    const targetVal = correctAns.trim().toLowerCase().replace(',', '.');
+    const feedback = document.getElementById(`feedback_${idx}`);
+    const card = document.getElementById(`card_${idx}`);
 
-            const mcContainer = document.getElementById('mc-options');
-            const tfContainer = document.getElementById('tf-options');
-            const saContainer = document.getElementById('short-answer-box');
+    if (inputVal === "") {
+        feedback.innerHTML = "";
+        card.className = "card";
+        return;
+    }
 
-            mcContainer.classList.add('hidden');
-            tfContainer.classList.add('hidden');
-            saContainer.classList.add('hidden');
+    if (inputVal === targetVal || targetVal.includes(inputVal)) {
+        feedback.innerHTML = `<span class="correct-text">✓ Đúng!</span>`;
+        card.className = "card correct";
+    } else {
+        feedback.innerHTML = `<span class="wrong-text">Đang nhập... (Đáp án gợi ý: ${correctAns})</span>`;
+        card.className = "card";
+    }
+}
 
-            if (q.type === 'mc') {
-                document.getElementById('question-type-badge').innerText = "Phần 1: Trắc nghiệm 4 lựa chọn";
-                mcContainer.classList.remove('hidden');
-                mcContainer.innerHTML = '';
-                q.opts.forEach((opt, idx) => {
-                    mcContainer.innerHTML += `
-                        <div id="opt-card-${idx}" onclick="selectMC(${idx})" class="opt-btn flex items-center justify-between p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-blue-400 bg-white transition">
-                            <div class="flex items-center">
-                                <span class="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center mr-3 font-bold text-sm text-gray-500" id="opt-circle-${idx}">${String.fromCharCode(65 + idx)}</span>
-                                <span class="text-gray-800 font-medium">${opt}</span>
-                            </div>
-                            <span id="opt-status-${idx}" class="font-bold text-sm"></span>
-                        </div>
-                    `;
-                });
-            } else if (q.type === 'tf') {
-                document.getElementById('question-type-badge').innerText = "Phần 2: Trắc nghiệm Đúng - Sai";
-                tfContainer.classList.remove('hidden');
-                tfContainer.innerHTML = '';
-                q.sub.forEach((subItem, subIdx) => {
-                    tfContainer.innerHTML += `
-                        <div id="tf-card-${subIdx}" class="p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                            <p class="font-medium text-gray-800 mb-2">${String.fromCharCode(97 + subIdx)}) ${subItem.text}</p>
-                            <div class="flex gap-4">
-                                <label class="flex items-center cursor-pointer font-semibold text-gray-700"><input type="radio" name="tf_${subIdx}" value="true" class="mr-2 w-4 h-4 text-blue-600"> Đúng</label>
-                                <label class="flex items-center cursor-pointer font-semibold text-gray-700"><input type="radio" name="tf_${subIdx}" value="false" class="mr-2 w-4 h-4 text-blue-600"> Sai</label>
-                            </div>
-                        </div>
-                    `;
-                });
-            } else if (q.type === 'short') {
-                document.getElementById('question-type-badge').innerText = "Phần 3: Trả lời ngắn";
-                saContainer.classList.remove('hidden');
-                const input = document.getElementById('short-input');
-                input.value = '';
-                input.className = "w-full p-4 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none text-lg bg-white";
-                input.disabled = false;
+// NỘP BÀI & TỔNG KẾT ĐIỂM
+function submitQuiz() {
+    const list = getCurrentData();
+    let totalItems = 0;
+    let correctCount = 0;
+
+    list.forEach((q, idx) => {
+        if (!q.type || q.type === 'mcq') {
+            totalItems++;
+            const selected = document.querySelector(`input[name="q_${idx}"]:checked`);
+            if (selected && selected.value === q.ans) {
+                correctCount++;
             }
-
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                window.MathJax.typesetPromise();
-            }
-        }
-
-        function selectMC(idx) {
-            if (isChecked) return;
-            selectedMCIdx = idx;
-            document.querySelectorAll('.opt-btn').forEach((btn, i) => {
-                if (i === idx) {
-                    btn.className = "opt-btn flex items-center justify-between p-4 border-2 border-blue-500 bg-blue-50 rounded-xl cursor-pointer transition";
-                } else {
-                    btn.className = "opt-btn flex items-center justify-between p-4 border-2 border-gray-200 bg-white rounded-xl cursor-pointer transition";
+        } 
+        else if (q.type === 'tf') {
+            q.items.forEach(item => {
+                totalItems++;
+                const selected = document.querySelector(`input[name="${item.id}"]:checked`);
+                if (selected && selected.value === item.ans) {
+                    correctCount++;
                 }
             });
         }
-
-        function handleAction() {
-            if (!isChecked) {
-                const q = activeQuestions[currentIndex];
-                
-                if (q.type === 'mc') {
-                    if (selectedMCIdx === null) { alert("Vui lòng chọn một đáp án!"); return; }
-                    
-                    const userCard = document.getElementById(`opt-card-${selectedMCIdx}`);
-                    const userStatus = document.getElementById(`opt-status-${selectedMCIdx}`);
-                    const correctCard = document.getElementById(`opt-card-${q.correct}`);
-                    const correctStatus = document.getElementById(`opt-status-${q.correct}`);
-
-                    if (selectedMCIdx === q.correct) {
-                        userCard.className = "opt-btn flex items-center justify-between p-4 border-2 border-emerald-500 bg-emerald-50 rounded-xl transition";
-                        userStatus.className = "text-emerald-600 font-bold";
-                        userStatus.innerText = "✓ Đúng rồi!";
-                        score++;
-                    } else {
-                        userCard.className = "opt-btn flex items-center justify-between p-4 border-2 border-rose-500 bg-rose-50 rounded-xl transition";
-                        userStatus.className = "text-rose-600 font-bold";
-                        userStatus.innerText = "✗ Sai mất rồi";
-                        
-                        correctCard.className = "opt-btn flex items-center justify-between p-4 border-2 border-emerald-500 bg-emerald-50 rounded-xl transition";
-                        correctStatus.className = "text-emerald-600 font-bold";
-                        correctStatus.innerText = "✓ Đáp án đúng";
-                    }
-                } else if (q.type === 'tf') {
-                    let complete = true;
-                    q.sub.forEach((subItem, subIdx) => {
-                        const sel = document.querySelector(`input[name="tf_${subIdx}"]:checked`);
-                        const card = document.getElementById(`tf-card-${subIdx}`);
-                        if (!sel) complete = false;
-                        else {
-                            const val = sel.value === 'true';
-                            if (val === subItem.ans) {
-                                card.className = "p-4 bg-emerald-50 border-2 border-emerald-500 rounded-xl";
-                            } else {
-                                card.className = "p-4 bg-rose-50 border-2 border-rose-500 rounded-xl";
-                            }
-                        }
-                    });
-                    if (!complete) { alert("Vui lòng làm đủ các câu a, b, c, d!"); return; }
-                } else if (q.type === 'short') {
-                    const input = document.getElementById('short-input');
-                    const val = input.value.trim();
-                    if (!val) { alert("Vui lòng nhập câu trả lời!"); return; }
-                    input.disabled = true;
-                    if (val.toLowerCase() === String(q.correct).toLowerCase()) {
-                        input.className = "w-full p-4 border-2 border-emerald-500 bg-emerald-50 font-bold text-emerald-800 rounded-xl text-lg";
-                        score++;
-                    } else {
-                        input.className = "w-full p-4 border-2 border-rose-500 bg-rose-50 font-bold text-rose-800 rounded-xl text-lg";
-                    }
-                }
-
-                const expBox = document.getElementById('explanation-box');
-                expBox.className = "p-4 rounded-xl mb-6 text-sm bg-blue-50 text-blue-900 border border-blue-200";
-                expBox.innerHTML = `<strong>📖 Hướng dẫn giải thích:</strong> ${q.rationale}`;
-                expBox.classList.remove('hidden');
-
-                isChecked = true;
-                document.getElementById('action-btn').innerText = (currentIndex === activeQuestions.length - 1) ? "Xem kết quả" : "Câu tiếp theo ➜";
-
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise();
-                }
-            } else {
-                currentIndex++;
-                if (currentIndex < activeQuestions.length) {
-                    loadQuestion();
-                } else {
-                    showResult();
-                }
+        else if (q.type === 'sa') {
+            totalItems++;
+            const inputVal = document.getElementById(`sa_${idx}`).value.trim().toLowerCase().replace(',', '.');
+            const targetVal = q.ans.trim().toLowerCase().replace(',', '.');
+            if (inputVal === targetVal || (inputVal !== "" && targetVal.includes(inputVal))) {
+                correctCount++;
             }
         }
+    });
 
-        function showHint() {
-            alert(`💡 Gợi ý: ${activeQuestions[currentIndex].hint}`);
-        }
+    const finalScore = ((correctCount / totalItems) * 10).toFixed(1);
+    const resultDisplay = document.getElementById('result-display');
+    resultDisplay.style.display = 'block';
+    resultDisplay.innerHTML = `KẾT QUẢ TỔNG KẾT: Đúng ${correctCount} / ${totalItems} ý - ĐẠT ${finalScore} / 10 ĐIỂM`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-        function showResult() {
-            document.getElementById('quiz-screen').classList.add('hidden');
-            document.getElementById('result-screen').classList.remove('hidden');
-            document.getElementById('final-score').innerText = `${score} / ${activeQuestions.length} câu đúng`;
-        }
+// Chạy mặc định
+renderQuiz();
+</script>
 
-        // Khởi tạo mặc định
-        switchSubject('khtn');
-    </script>
 </body>
 </html>
